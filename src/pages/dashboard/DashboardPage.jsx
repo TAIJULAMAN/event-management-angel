@@ -24,8 +24,8 @@ function DashboardPage() {
 
   return (
     <div className="flex flex-col">
-      <div className="grid grid-cols-1 md:grid-cols-2 mmd:grid-cols-2 lg:grid-cols-2 gap-5">
-        {/* Total User */}
+      <div className="grid grid-cols-1 md:grid-cols-2 mmd:grid-cols-3 lg:grid-cols-4 gap-5">
+        {/* Total Host */}
         <div className="flex justify-between items-center p-5 bg-[#F2F2F2]  gap-5 h-[80px] rounded-lg shadow-md">
           <div className="flex gap-3 items-center">
             <p className="rounded-full flex justify-center items-center">
@@ -34,11 +34,37 @@ function DashboardPage() {
                 className=" bg-white rounded-full p-2 w-10 h-10 text-[#FF0000]"
               />
             </p>
-            <p className="text-xl font-semibold">Total User</p>
+            <p className="text-xl font-semibold">Total Host</p>
           </div>
           <p className="text-[#FF0000] text-2xl font-bold mr-10">1200</p>
         </div>
-        {/*  Total video */}
+        {/* Total Dmover */}
+        <div className="flex justify-between items-center p-5 bg-[#F2F2F2]  gap-5 h-[80px] rounded-lg shadow-md">
+          <div className="flex gap-3 items-center">
+            <p className="rounded-full flex justify-center items-center">
+              <FaUsers
+                size={20}
+                className=" bg-white rounded-full p-2 w-10 h-10 text-[#FF0000]"
+              />
+            </p>
+            <p className="text-xl font-semibold">Total Host</p>
+          </div>
+          <p className="text-[#FF0000] text-2xl font-bold mr-10">1200</p>
+        </div>
+        {/*  Total Total Event */}
+        <div className="flex justify-between items-center p-5 bg-[#F2F2F2] rounded-lg shadow-md gap-5 h-[80px]">
+          <div className="flex gap-3 items-center">
+            <p className="rounded-full flex justify-center items-center">
+              <FaVideo
+                size={20}
+                className=" bg-white rounded-full p-2 w-10 h-10 text-[#FF0000]"
+              />
+            </p>
+            <p className="text-xl font-semibold">Total video</p>
+          </div>
+          <p className="text-[#FF0000] text-2xl font-bold mr-10">100</p>
+        </div>
+        {/*  Blocked account */}
         <div className="flex justify-between items-center p-5 bg-[#F2F2F2] rounded-lg shadow-md gap-5 h-[80px]">
           <div className="flex gap-3 items-center">
             <p className="rounded-full flex justify-center items-center">
@@ -80,9 +106,8 @@ function DashboardPage() {
                       <div
                         key={year}
                         onClick={() => handleSelect(year)}
-                        className={`p-2 cursor-pointer hover:bg-gray-100 transition ${
-                          year === selectedYear ? "bg-gray-200" : ""
-                        }`}
+                        className={`p-2 cursor-pointer hover:bg-gray-100 transition ${year === selectedYear ? "bg-gray-200" : ""
+                          }`}
                       >
                         {year}
                       </div>
@@ -121,9 +146,8 @@ function DashboardPage() {
                       <div
                         key={year}
                         onClick={() => handleSelect(year)}
-                        className={`p-2 cursor-pointer hover:bg-gray-100 transition ${
-                          year === selectedYear ? "bg-gray-200" : ""
-                        }`}
+                        className={`p-2 cursor-pointer hover:bg-gray-100 transition ${year === selectedYear ? "bg-gray-200" : ""
+                          }`}
                       >
                         {year}
                       </div>
@@ -135,9 +159,9 @@ function DashboardPage() {
           </div>
           <TotalView />
         </div>
-       <div className="mt-5">
-       <TotalUsers />
-       </div>
+        <div className="mt-5">
+          <TotalUsers />
+        </div>
       </div>
 
       <div className="mt-5">

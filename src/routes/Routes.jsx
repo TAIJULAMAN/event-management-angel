@@ -13,7 +13,6 @@ import TermsCondition from "../pages/settings/TermsCondition";
 // import FAQ from "../pages/settings/FAQ";
 import UserDetails from "../pages/userDetails/UserDetails";
 import ProfilePage from "../pages/profile/ProfilePage";
-import VideoList from "../pages/videoList/VideoList";
 import FAQ from "../pages/settings/Faq";
 import Services from "../pages/Services/Services";
 import Roles from "../pages/Roles/Roles";
@@ -45,11 +44,6 @@ const router = createBrowserRouter([
         path: "/",
         element: <DashboardPage />,
       },
-      {
-        path: "/videoList",
-        element: <VideoList />,
-      },
-
       {
         path: "/user-details",
         element: <UserDetails />,

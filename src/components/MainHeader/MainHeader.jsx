@@ -7,7 +7,7 @@ const MainHeader = ({ toggleSidebar }) => {
 
   return (
     <div className="relative w-full">
-      <header className="bg-[#00c0b5] shadow-sm">
+      <header className="bg-[#EDF1ED] shadow-sm">
         <div className="flex justify-between items-center px-5 md:px-10 h-[80px]">
           <div onClick={() => navigate("/")}>
             {/* <img
@@ -15,7 +15,7 @@ const MainHeader = ({ toggleSidebar }) => {
               className="w-[72px] h-[50px]"
               alt="User Avatar"
             /> */}
-            <h1 className="text-3xl text-white font-bold">DASHBOARD</h1>
+            <h1 className="text-3xl text-[#0D0D0D] font-bold">LOGO</h1>
           </div>
           <div className="flex">
             <div
@@ -27,7 +27,7 @@ const MainHeader = ({ toggleSidebar }) => {
                 className="w-8 md:w-12 h-8 md:h-12 object-cover rounded-full"
                 alt="User Avatar"
               />
-              <h3 className="hidden md:block text-white text-lg font-semibold">
+              <h3 className="hidden md:block text-[#0D0D0D] text-lg font-semibold">
                 Mr. Admin
               </h3>
             </div>
