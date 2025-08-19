@@ -1,10 +1,10 @@
 import { FaChevronDown, FaUsers, FaVideo } from "react-icons/fa";
-import RecentUsers from "../../components/Dashboard/RecentUsers";
+// import RecentUsers from "../../components/Dashboard/RecentUsers";
 import { useState } from "react";
 import dayjs from "dayjs";
-import TotalUser from "../../components/Dashboard/TotalUser";
-import TotalView from "../../components/Dashboard/TotalView";
-import TotalUsers from "../../components/Dashboard/TotalUsers";
+import RecentUsers from "./RecentUsers";
+// import TotalUser from "../../components/Dashboard/TotalUser";
+// import TotalView from "../../components/Dashboard/TotalView";
 
 function DashboardPage() {
   const currentYear = dayjs().year();
@@ -47,7 +47,7 @@ function DashboardPage() {
                 className=" bg-white rounded-full p-2 w-10 h-10 text-[#FF0000]"
               />
             </p>
-            <p className="text-xl font-semibold">Total Host</p>
+            <p className="text-xl font-semibold">Total Dmover</p>
           </div>
           <p className="text-[#FF0000] text-2xl font-bold mr-10">1200</p>
         </div>
@@ -60,7 +60,7 @@ function DashboardPage() {
                 className=" bg-white rounded-full p-2 w-10 h-10 text-[#FF0000]"
               />
             </p>
-            <p className="text-xl font-semibold">Total video</p>
+            <p className="text-xl font-semibold">Total Event</p>
           </div>
           <p className="text-[#FF0000] text-2xl font-bold mr-10">100</p>
         </div>
@@ -73,7 +73,7 @@ function DashboardPage() {
                 className=" bg-white rounded-full p-2 w-10 h-10 text-[#FF0000]"
               />
             </p>
-            <p className="text-xl font-semibold">Total video</p>
+            <p className="text-xl font-semibold">Total Blocked Account</p>
           </div>
           <p className="text-[#FF0000] text-2xl font-bold mr-10">100</p>
         </div>
@@ -159,11 +159,7 @@ function DashboardPage() {
           </div>
           <TotalView />
         </div>
-        <div className="mt-5">
-          <TotalUsers />
-        </div>
       </div>
-
       <div className="mt-5">
         <h1 className="text-2xl font-bold mb-5">Recent Joined User</h1>
         <RecentUsers />
