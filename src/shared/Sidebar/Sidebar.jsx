@@ -6,22 +6,18 @@ import {
   IoBagAddOutline,
   IoCloseSharp,
   IoLogInOutline,
-  IoVideocamOutline,
 } from "react-icons/io5";
 import { RxDashboard } from "react-icons/rx";
 import { MdOutlinePrivacyTip } from "react-icons/md";
 import { SlArrowDown } from "react-icons/sl";
 import { GoQuestion } from "react-icons/go";
 import { TbBrandWechat } from "react-icons/tb";
+import { CiBoxList } from "react-icons/ci";
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
   const location = useLocation();
   const currentPath = location.pathname;
-
-  // Check if current path matches a menu item
   const isActive = (path) => currentPath === path;
-
-  // Check if any settings submenu is active
   const isSettingsActive = currentPath.startsWith("/setting");
 
   return (
@@ -38,7 +34,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       </button>
 
       {/* Sidebar Menu */}
-      <ul className="mt-10 pl-5 text-[10px]">
+      <ul className="mt-10 px-5 text-[10px]">
         {/* Dashboard Page */}
         <Link to="/">
           <li
@@ -61,7 +57,43 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
               }`}
           >
             <FaRegUser className="w-5 h-5" />
-            <p className="text-lg font-semibold">User Table</p>
+            <p className="text-lg font-semibold">User Management</p>
+          </li>
+        </Link>
+        {/* Event Management */}
+        <Link to="">
+          <li
+            className={`flex items-center gap-2 mt-5 cursor-pointer transition-all duration-300 ease-in-out ${isActive("/user-details")
+              ? "bg-[#89D0C9] text-white px-3 py-3 rounded-lg"
+              : ""
+              }`}
+          >
+            <CiBoxList className="w-5 h-5" />
+            <p className="text-lg font-semibold">Event Management</p>
+          </li>
+        </Link>
+        {/* Group Management */}
+        <Link to="">
+          <li
+            className={`flex items-center gap-2 mt-5 cursor-pointer transition-all duration-300 ease-in-out ${isActive("/user-details")
+              ? "bg-[#89D0C9] text-white px-3 py-3 rounded-lg"
+              : ""
+              }`}
+          >
+            <CiBoxList className="w-5 h-5" />
+            <p className="text-lg font-semibold">Group Management</p>
+          </li>
+        </Link>
+        {/* Chat Management */}
+        <Link to="">
+          <li
+            className={`flex items-center gap-2 mt-5 cursor-pointer transition-all duration-300 ease-in-out ${isActive("/user-details")
+              ? "bg-[#89D0C9] text-white px-3 py-3 rounded-lg"
+              : ""
+              }`}
+          >
+            <CiBoxList className="w-5 h-5" />
+            <p className="text-lg font-semibold">Chat Management</p>
           </li>
         </Link>
         {/*  Service */}
@@ -73,7 +105,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
               }`}
           >
             <IoBagAddOutline className="w-5 h-5" />
-            <p className="text-lg font-semibold">Services</p>
+            <p className="text-lg font-semibold">Media & Social</p>
           </li>
         </Link>
         {/* Add Roles */}
@@ -85,7 +117,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
               }`}
           >
             <IoBagAddOutline className="w-5 h-5" />
-            <p className="text-lg font-semibold">Roles</p>
+            <p className="text-lg font-semibold">Interactivity</p>
           </li>
         </Link>
 
@@ -98,80 +130,43 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
               }`}
           >
             <TbBrandWechat className="w-5 h-5" />
-            <p className="text-lg font-semibold">Chat</p>
+            <p className="text-lg font-semibold">Support Chat</p>
           </li>
         </Link>
 
-        {/* Settings */}
-        <Link to="/settings">
+        <Link to="/setting/privacy-policy">
           <li
-            className={`flex justify-between items-center gap-2 mt-5 cursor-pointer py-2 whitespace-nowrap transition-all duration-300 ease-in-out ${isSettingsActive
-              ? "bg-[#FF0000] text-white pl-3 pr-5 py-3 rounded-lg"
+            className={`flex items-center gap-2 mt-5 cursor-pointer transition-all duration-300 ease-in-out ${isActive("/chat")
+              ? "bg-[#89D0C9] text-white px-3 py-3 rounded-lg"
               : ""
               }`}
           >
-            <div className="flex flex-row justify-between items-center gap-2">
-              <IoMdSettings className="w-5 h-5" />
-              <p className="text-lg font-semibold">Settings</p>
-            </div>
-            <SlArrowDown className="w-5 h-5" />
+            <MdOutlinePrivacyTip className="w-5 h-5 text-lg font-semibold" />
+            <p className="text-lg font-semibold">Privacy Policy</p>
           </li>
         </Link>
 
-        {/* Settings Submenu */}
-        {isSettingsActive && (
-          <ul className="text-start py-3 ml-5">
-            <Link to="/setting/about-us">
-              <li
-                className={`py-[5px] flex items-center gap-2 transition-all duration-300 ease-in-out ${isActive("/setting/about-us") ? "text-[#FF0000]" : ""
-                  }`}
-              >
-                <IoMdInformationCircleOutline className="w-5 h-5 text-lg font-semibold" />
-                <p className="text-lg font-semibold">About Us</p>
-              </li>
-            </Link>
+        <Link to="/setting/terms-and-condition">
+          <li
+            className={`flex items-center gap-2 mt-5 cursor-pointer transition-all duration-300 ease-in-out ${isActive("/chat")
+              ? "bg-[#89D0C9] text-white px-3 py-3 rounded-lg"
+              : ""
+              }`}
+          >
+            <FaRegBookmark className="w-5 h-5 text-lg font-semibold" />
+            <p className="text-lg font-semibold">Terms and Conditions</p>
+          </li>
+        </Link>
 
-            <Link to="/setting/privacy-policy">
-              <li
-                className={`py-2 flex items-center gap-2 transition-all duration-300 ease-in-out ${isActive("/setting/privacy-policy") ? "text-[#FF0000]" : ""
-                  }`}
-              >
-                <MdOutlinePrivacyTip className="w-5 h-5 text-lg font-semibold" />
-                <p className="text-lg font-semibold">Privacy Policy</p>
-              </li>
-            </Link>
 
-            <Link to="/setting/terms-and-condition">
-              <li
-                className={`pb-2 flex items-center gap-2 transition-all duration-300 ease-in-out ${isActive("/setting/terms-and-condition")
-                  ? "text-[#FF0000]"
-                  : ""
-                  }`}
-              >
-                <FaRegBookmark className="w-5 h-5 text-lg font-semibold" />
-                <p className="text-lg font-semibold">Terms and Conditions</p>
-              </li>
-            </Link>
 
-            <Link to="/setting/faq">
-              <li
-                className={`pb-2 flex items-center gap-2 transition-all duration-300 ease-in-out ${isActive("/setting/faq") ? "text-[#FF0000]" : ""
-                  }`}
-              >
-                <GoQuestion className="w-5 h-5 text-lg font-semibold" />
-                <p className="text-lg font-semibold">FAQ</p>
-              </li>
-            </Link>
-          </ul>
-        )}
       </ul>
 
       {/* Logout Button */}
       <div className="absolute mt-8 md:mt-20 mmd:mt-20 w-full px-5">
         <Link to="/sign-in">
           <button
-            className="flex items-center gap-4 w-full py-3 rounded-lg bg-[#a33131] hover:bg-primary duration-200 text-white justify-center "
-          // onClick={handleLogout}
+            className="flex items-center gap-4 w-full py-3 rounded-lg bg-[#89D0C9] text-white px-3 py-3 rounded-lg duration-200 text-white justify-center "
           >
             <IoLogInOutline className="w-5 h-5 font-bold" />
             <span>Logout</span>
