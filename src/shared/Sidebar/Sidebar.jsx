@@ -85,7 +85,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           </li>
         </Link>
         {/* Chat Management */}
-        <Link to="">
+        <Link to="/chat-management">
           <li
             className={`flex items-center gap-2 mt-5 cursor-pointer transition-all duration-300 ease-in-out ${isActive("/user-details")
               ? "bg-[#89D0C9] text-white px-3 py-3 rounded-lg"
@@ -97,7 +97,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           </li>
         </Link>
         {/*  Service */}
-        <Link to="/services">
+        <Link to="/media-social">
           <li
             className={`flex items-center gap-2 mt-5 cursor-pointer transition-all duration-300 ease-in-out ${isActive("/services")
               ? "bg-[#89D0C9] text-white px-3 py-3 rounded-lg"
