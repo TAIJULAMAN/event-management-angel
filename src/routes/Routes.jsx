@@ -61,11 +61,11 @@ const router = createBrowserRouter([
 
       // settings
       {
-        path: "/setting/privacy-policy",
+        path: "/privacy-policy",
         element: <PrivacyPolicy />,
       },
       {
-        path: "/setting/terms-and-condition",
+        path: "/terms-and-condition",
         element: <TermsCondition />,
       },
 

@@ -13,63 +13,63 @@ const users = [
     avatar: "https://avatar.iran.liara.run/public/28",
   },
   {
-    id: 1,
+    id: 2,
     name: "Patient Mahfud",
     message: "Thank you Dr.",
     time: "3:00 PM",
     avatar: "https://avatar.iran.liara.run/public/27",
   },
   {
-    id: 1,
+    id: 3,
     name: "Patient Mahfud",
     message: "Thank you Dr.",
     time: "3:00 PM",
     avatar: "https://avatar.iran.liara.run/public/29",
   },
   {
-    id: 1,
+    id: 4,
     name: "Patient Mahfud",
     message: "Thank you Dr.",
     time: "3:00 PM",
     avatar: "https://avatar.iran.liara.run/public/30",
   },
   {
-    id: 1,
+    id: 5,
     name: "Patient Mahfud",
     message: "Thank you Dr.",
     time: "3:00 PM",
     avatar: "https://avatar.iran.liara.run/public/31",
   },
   {
-    id: 1,
+    id: 6,
     name: "Patient Mahfud",
     message: "Thank you Dr.",
     time: "3:00 PM",
     avatar: "https://avatar.iran.liara.run/public/32",
   },
   {
-    id: 1,
+    id: 7,
     name: "Patient Mahfud",
     message: "Thank you Dr.",
     time: "3:00 PM",
     avatar: "https://avatar.iran.liara.run/public/33",
   },
   {
-    id: 1,
+    id: 8,
     name: "Patient Mahfud",
     message: "Thank you Dr.",
     time: "3:00 PM",
     avatar: "https://avatar.iran.liara.run/public/31",
   },
   {
-    id: 1,
+    id: 9,
     name: "Patient Mahfud",
     message: "Thank you Dr.",
     time: "3:00 PM",
     avatar: "https://avatar.iran.liara.run/public/32",
   },
   {
-    id: 1,
+    id: 10,
     name: "Patient Mahfud",
     message: "Thank you Dr.",
     time: "3:00 PM",
@@ -102,7 +102,6 @@ const Chat = () => {
   ]);
   const [newMessage, setNewMessage] = useState("");
   const [showSidebar, setShowSidebar] = useState(false);
-
   const sendMessage = () => {
     if (newMessage.trim()) {
       setMessages([
@@ -119,29 +118,7 @@ const Chat = () => {
         <h1 className="text-[#0D0D0D] text-start text-3xl font-bold">
           Messages
         </h1>
-        {/* Tab Navigation Section */}
-        <div className="flex justify-start items-center gap-5 text-md md:text-xl font-semibold my-5">
-          <p
-            onClick={() => setActiveTab("User")}
-            className={`cursor-pointer pb-1 ${
-              activeTab === "User"
-                ? "text-[#00C0B5] border-b-4 border-[#00C0B5] font-bold"
-                : "text-[#575757] font-bold"
-            }`}
-          >
-            User{" "}
-          </p>
-          <p
-            onClick={() => setActiveTab("Professional")}
-            className={`cursor-pointer pb-1 ${
-              activeTab === "Professional"
-                ? "text-[#00C0B5] border-b-4 border-[#00C0B5] font-bold"
-                : "text-[#575757] font-bold"
-            }`}
-          >
-            Professional
-          </p>
-        </div>
+      
       </div>
 
       {/* Header for Mobile */}
@@ -156,9 +133,8 @@ const Chat = () => {
       <div className="flex flex-1">
         {/* Sidebar - User List */}
         <div
-          className={`absolute md:relative top-0 left-0 w-64 md:w-96 h-full bg-white md:flex flex-col p-4 transition-all duration-300 z-50 mb-10 ${
-            showSidebar ? "translate-x-0" : "-translate-x-full md:translate-x-0"
-          }`}
+          className={`absolute md:relative top-0 left-0 w-64 md:w-96 h-full bg-white md:flex flex-col p-4 transition-all duration-300 z-50 mb-10 ${showSidebar ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+            }`}
         >
           <button
             className="md:hidden self-end mb-4 text-gray-500"
@@ -189,7 +165,7 @@ const Chat = () => {
                   className="h-12 w-12 rounded-full object-cover"
                 />
                 <div className="flex-1 ">
-                  <h3 className="text-lg font-medium mb-8">{user.name}</h3> 
+                  <h3 className="text-lg font-medium mb-8">{user.name}</h3>
                 </div>
                 <p className="text-xs text-gray-500 mb-8">{user.time}</p>
               </div>
@@ -211,9 +187,8 @@ const Chat = () => {
             {messages.map((msg, i) => (
               <div
                 key={i}
-                className={`flex ${
-                  msg.sender === "me" ? "justify-end" : "justify-start"
-                }`}
+                className={`flex ${msg.sender === "me" ? "justify-end" : "justify-start"
+                  }`}
               >
                 <div className="bg-white rounded-xl p-5 max-w-sm">
                   <p className="text-xl text-[#4F4F59]  text-left">
@@ -233,7 +208,7 @@ const Chat = () => {
               className="flex-1 px-2 py-5 border rounded-full focus:outline-none bg-white placeholder:pl-5"
             />
             <button className="p-3 bg-gray-100 absolute right-22 bottom-7 rounded-full">
-              <IoImagesOutline  size={20} className="w-5 h-5"  />
+              <IoImagesOutline size={20} className="w-5 h-5" />
 
             </button>
             <button

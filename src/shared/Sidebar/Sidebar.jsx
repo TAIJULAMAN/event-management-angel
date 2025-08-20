@@ -133,9 +133,9 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           </li>
         </Link>
 
-        <Link to="/setting/privacy-policy">
+        <Link to="/privacy-policy">
           <li
-            className={`flex items-center gap-2 mt-5 cursor-pointer transition-all duration-300 ease-in-out ${isActive("/chat")
+            className={`flex items-center gap-2 mt-5 cursor-pointer transition-all duration-300 ease-in-out ${isActive("/privacy-policy")
               ? "bg-[#89D0C9] text-white px-3 py-3 rounded-lg"
               : ""
               }`}
@@ -145,9 +145,9 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           </li>
         </Link>
 
-        <Link to="/setting/terms-and-condition">
+        <Link to="/terms-and-condition">
           <li
-            className={`flex items-center gap-2 mt-5 cursor-pointer transition-all duration-300 ease-in-out ${isActive("/chat")
+            className={`flex items-center gap-2 mt-5 cursor-pointer transition-all duration-300 ease-in-out ${isActive("/terms-and-condition")
               ? "bg-[#89D0C9] text-white px-3 py-3 rounded-lg"
               : ""
               }`}
