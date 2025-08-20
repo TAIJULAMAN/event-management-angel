@@ -22,7 +22,7 @@ export default function PrivacyPolicy() {
       <div className="text-center py-5 w-full">
         <button
           onClick={() => console.log(content)}
-          className="bg-[#FF0000] text-white font-semibold w-full py-2 rounded transition duration-200"
+          className="bg-[#00c0b5] text-white font-semibold w-full py-2 rounded transition duration-200"
         >
           Save changes
         </button>

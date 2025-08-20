@@ -18,7 +18,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
   const location = useLocation();
   const currentPath = location.pathname;
   const isActive = (path) => currentPath === path;
-  const isSettingsActive = currentPath.startsWith("/setting");
 
   return (
     <div

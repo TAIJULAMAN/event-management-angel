@@ -8,7 +8,7 @@ function TermsCondition() {
   );
 
   return (
-    <div className="p-5">
+    <div className="px-5 md:px-0 py-5 md:py-10">
       <h1 className="text-start text-3xl font-bold mb-5">Terms & Condition</h1>
 
       <div className=" bg-white rounded shadow p-5 h-full">
@@ -22,7 +22,7 @@ function TermsCondition() {
       <div className="text-center py-5">
         <button
           onClick={() => console.log(content)}
-         className="bg-[#FF0000] text-white font-semibold w-full py-2 rounded transition duration-200"
+          className="bg-[#00c0b5] text-white font-semibold w-full py-2 rounded transition duration-200"
         >
           Save changes
         </button>
