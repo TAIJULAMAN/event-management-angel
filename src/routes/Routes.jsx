@@ -50,17 +50,8 @@ const router = createBrowserRouter([
         element: <EventManagement />,
       },
       {
-        path: "/group-management",
-        element: <GroupManagement />,
-      },
-      {
         path: "/chat",
         element: <Chat />,
-      },
-      // chat management
-      {
-        path: "/chat-management",
-        element: <ChatManagement />,
       },
 
       // media and social

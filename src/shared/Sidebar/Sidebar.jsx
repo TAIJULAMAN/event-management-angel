@@ -71,30 +71,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             <p className="text-lg font-semibold">Event Management</p>
           </li>
         </Link>
-        {/* Group Management */}
-        <Link to="/group-management">
-          <li
-            className={`flex items-center gap-2 mt-5 cursor-pointer transition-all duration-300 ease-in-out ${isActive("/group-management")
-              ? "bg-[#89D0C9] text-white px-3 py-3 rounded-lg"
-              : ""
-              }`}
-          >
-            <GrGroup className="w-5 h-5" />
-            <p className="text-lg font-semibold">Group Management</p>
-          </li>
-        </Link>
-        {/* Chat Management */}
-        <Link to="/chat-management">
-          <li
-            className={`flex items-center gap-2 mt-5 cursor-pointer transition-all duration-300 ease-in-out ${isActive("/chat-management")
-              ? "bg-[#89D0C9] text-white px-3 py-3 rounded-lg"
-              : ""
-              }`}
-          >
-            <IoChatboxEllipsesOutline className="w-5 h-5" />
-            <p className="text-lg font-semibold">Chat Management</p>
-          </li>
-        </Link>
         {/*  Media & Social*/}
         <Link to="/media-social">
           <li

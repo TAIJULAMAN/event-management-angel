@@ -1,12 +1,9 @@
 import { FaChevronDown, FaUsers, FaVideo } from "react-icons/fa";
-// import RecentUsers from "../../components/Dashboard/RecentUsers";
 import { useState } from "react";
 import dayjs from "dayjs";
 import RecentUsers from "./RecentUsers";
 import TotalUser from "./TotalUser";
 import TotalView from "./TotalView";
-// import TotalUser from "../../components/Dashboard/TotalUser";
-// import TotalView from "../../components/Dashboard/TotalView";
 
 function DashboardPage() {
   const currentYear = dayjs().year();
@@ -87,7 +84,7 @@ function DashboardPage() {
               <h1 className="text-xl font-semibold">User Growth</h1>
             </div>
             <div className="flex justify-between items-center gap-5 whitespace-nowrap">
-       
+
               <div className="relative w-full md:w-32">
                 {/* Selected Year Display */}
                 <button
@@ -124,7 +121,7 @@ function DashboardPage() {
               <h1 className="text-xl font-semibold">Event Growth</h1>
             </div>
             <div className="flex justify-between items-center gap-5 whitespace-nowrap">
-           
+
               <div className="relative w-full md:w-32">
                 {/* Selected Year Display */}
                 <button

@@ -82,7 +82,7 @@ export default function MediaSocial() {
   };
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
+    <div className="p-5 bg-gray-100 min-h-screen">
       <Card className=" mx-auto" bodyStyle={{ padding: '24px' }}>
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-2">
