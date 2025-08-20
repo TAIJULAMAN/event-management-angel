@@ -10,6 +10,8 @@ import TermsCondition from "../pages/Terms Condition/TermsCondition";
 import UserDetails from "../pages/userDetails/UserDetails";
 import ProfilePage from "../pages/profile/ProfilePage";
 import Chat from "../pages/Chat/Chat";
+import MediaSocial from "../pages/Media&Social/MediaSocial";
+import ChatManagement from "../pages/ChatManagement/ChatManagement";
 
 const router = createBrowserRouter([
   {
@@ -44,6 +46,17 @@ const router = createBrowserRouter([
       {
         path: "/chat",
         element: <Chat />,
+      },
+      // chat management
+      {
+        path: "/chat-management",
+        element: <ChatManagement />,
+      },
+
+      // media and social
+      {
+        path: "/media-social",
+        element: <MediaSocial />,
       },
 
       // settings
