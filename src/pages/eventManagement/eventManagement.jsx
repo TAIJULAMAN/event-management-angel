@@ -1,14 +1,18 @@
-import { ConfigProvider, Modal, Table } from "antd";
+import { ConfigProvider, Modal, Table, Select } from "antd";
 import { useState } from "react";
 import { IoSearch } from "react-icons/io5";
 import PageHeading from "../../components/PageHeading/PageHeading";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { FaRegEye } from "react-icons/fa";
 
+const { Option } = Select;
+
 function EventManagement() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isViewModalOpen, setIsViewModalOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
+    const [selectedEventType, setSelectedEventType] = useState("all");
+    const [selectedCategory, setSelectedCategory] = useState("all");
 
     const showModal = () => {
         setIsModalOpen(true);
@@ -355,7 +359,7 @@ function EventManagement() {
                 <div className="flex items-center gap-3">
                     <div className="flex flex-col gap-[2px]">
                         <span className="leading-none">{record.name}</span>
-                        {/* <span className="leading-none text-gray-500 text-sm">{record.email}</span> */}
+
                     </div>
                 </div>
             ),
@@ -398,17 +402,54 @@ function EventManagement() {
 
     return (
         <div>
-            <div className="my-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+            <div className="my-5 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
                 <PageHeading title="Event Management" />
-                <div className="relative w-full sm:w-[300px] ">
-                    <input
-                        type="text"
-                        placeholder="Search..."
-                        className="border border-[#e5eaf2] py-3 pl-12 pr-[65px] outline-none w-full rounded-md"
-                    />
-                    <span className=" text-gray-500 absolute top-0 left-0 h-full px-5 flex items-center justify-center rounded-r-md cursor-pointer">
-                        <IoSearch className="text-[1.3rem]" />
-                    </span>
+                <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+
+                    {/* Event Type Dropdown */}
+                    <Select
+                        value={selectedEventType}
+                        onChange={setSelectedEventType}
+                        className="w-full sm:w-[180px]"
+                        placeholder="Event Type"
+                        style={{ height: '48px' }}
+                    >
+                        <Option value="all">All Types</Option>
+                        <Option value="upcoming">Upcoming</Option>
+                        <Option value="ongoing">Ongoing</Option>
+                        <Option value="completed">Completed</Option>
+                    </Select>
+
+                    {/* Categories Dropdown */}
+                    <Select
+                        value={selectedCategory}
+                        onChange={setSelectedCategory}
+                        className="w-full sm:w-[200px]"
+                        placeholder="Categories"
+                        style={{ height: '48px' }}
+                    >
+                        <Option value="all">All Categories</Option>
+                        <Option value="technology">Technology</Option>
+                        <Option value="business">Business</Option>
+                        <Option value="design">Design</Option>
+                        <Option value="marketing">Marketing</Option>
+                        <Option value="healthcare">Healthcare</Option>
+                        <Option value="finance">Finance</Option>
+                        <Option value="education">Education</Option>
+                        <Option value="gaming">Gaming</Option>
+                    </Select>
+                    {/* Search Input */}
+                    <div className="relative w-full sm:w-[300px]">
+                        <input
+                            type="text"
+                            placeholder="Search events..."
+                            className="border border-[#e5eaf2] py-3 pl-12 pr-4 outline-none w-full rounded-md"
+                        />
+                        <span className="text-gray-500 absolute top-0 left-0 h-full px-3 flex items-center justify-center cursor-pointer">
+                            <IoSearch className="text-[1.3rem]" />
+                        </span>
+                    </div>
+
                 </div>
             </div>
             <ConfigProvider
@@ -430,6 +471,11 @@ function EventManagement() {
                             headerColor: "rgb(255,255,255)",
                             cellFontSize: 16,
                             headerSplitColor: "#00c0b5",
+                        },
+                        Select: {
+                            colorPrimary: "#00c0b5",
+                            colorPrimaryHover: "#00a89b",
+                            controlOutline: "rgba(0, 192, 181, 0.2)",
                         },
                     },
                 }}
@@ -486,7 +532,7 @@ function EventManagement() {
                                             className="w-[200px] h-24 rounded-lg border-4 border-white shadow-lg object-cover"
                                         />
                                         <div className={`absolute -top-2 -right-2 px-2 py-1 rounded-full text-xs font-bold text-white ${selectedUser.type === 'upcoming' ? 'bg-blue-500' :
-                                                selectedUser.type === 'ongoing' ? 'bg-green-500' : 'bg-gray-500'
+                                            selectedUser.type === 'ongoing' ? 'bg-green-500' : 'bg-gray-500'
                                             }`}>
                                             {selectedUser.type.toUpperCase()}
                                         </div>
@@ -555,10 +601,10 @@ function EventManagement() {
                                         <div className="bg-white border border-gray-200 p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
                                             <div className="flex items-center gap-3">
                                                 <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${selectedUser.type === 'upcoming' ? 'bg-blue-100' :
-                                                        selectedUser.type === 'ongoing' ? 'bg-green-100' : 'bg-gray-100'
+                                                    selectedUser.type === 'ongoing' ? 'bg-green-100' : 'bg-gray-100'
                                                     }`}>
                                                     <span className={`text-lg ${selectedUser.type === 'upcoming' ? 'text-blue-600' :
-                                                            selectedUser.type === 'ongoing' ? 'text-green-600' : 'text-gray-600'
+                                                        selectedUser.type === 'ongoing' ? 'text-green-600' : 'text-gray-600'
                                                         }`}>
                                                         {selectedUser.type === 'upcoming' ? '🕒' :
                                                             selectedUser.type === 'ongoing' ? '▶️' : '✅'}
