@@ -125,7 +125,7 @@ function SignInPage() {
                     Remember Password
                   </span>
                 </label>
-                <Link to="/forget-password" className="text-[#D93D04] text-xl">
+                <Link to="/forget-password" className="text-[#00c0b5] text-xl">
                   Forgot Password?
                 </Link>
               </div>
@@ -133,7 +133,7 @@ function SignInPage() {
                 <button
                   onClick={() => navigate("/")}
                   type="button"
-                  className="w-1/4 bg-[#FF0000] text-white font-semibold py-2 rounded-lg shadow-lg cursor-pointer mt-5"
+                  className="w-1/3 bg-[#00c0b5] text-white font-bold py-3 rounded-lg shadow-lg cursor-pointer mt-5"
                 >
                   Log In
                 </button>

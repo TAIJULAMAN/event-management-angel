@@ -6,7 +6,7 @@ function ForgetPassword() {
   return (
     <div className="bg-white min-h-screen flex items-center justify-center p-5">
       <div className="container mx-auto">
-        <div className="flex  justify-center items-center "> 
+        <div className="flex  justify-center items-center ">
           <div className="w-full md:w-1/2 lg:w-1/2 p-5 md:px-[100px] md:py-[200px] bg-white  shadow-[0px_10px_20px_rgba(0,0,0,0.2)] rounded-2xl">
             <h2 className="text-[#0D0D0D] text-2xl  font-bold text-center mb-5">
               Forgot password ?
@@ -29,7 +29,7 @@ function ForgetPassword() {
                 <button
                   onClick={() => navigate("/verification-code")}
                   type="button"
-                  className="whitespace-nowrap w-1/3 bg-[#FF0000] text-white font-semibold py-2 rounded-lg shadow-lg cursor-pointer mt-5"
+                  className="w-1/3 bg-[#00c0b5] text-white font-bold py-3 rounded-lg shadow-lg cursor-pointer mt-5"
                 >
                   Send Code
                 </button>
