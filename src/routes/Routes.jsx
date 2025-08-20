@@ -12,6 +12,8 @@ import ProfilePage from "../pages/profile/ProfilePage";
 import Chat from "../pages/Chat/Chat";
 import MediaSocial from "../pages/Media&Social/MediaSocial";
 import ChatManagement from "../pages/ChatManagement/ChatManagement";
+import EventManagement from "../pages/eventManagement/eventManagement";
+import GroupManagement from "../pages/groupManagement/groupManagement";
 
 const router = createBrowserRouter([
   {
@@ -44,13 +46,12 @@ const router = createBrowserRouter([
         element: <UserDetails />,
       },
       {
+        path: "/event-management",
+        element: <EventManagement />,
+      },
+      {
         path: "/chat",
         element: <Chat />,
-      },
-      // chat management
-      {
-        path: "/chat-management",
-        element: <ChatManagement />,
       },
 
       // media and social
@@ -61,11 +62,11 @@ const router = createBrowserRouter([
 
       // settings
       {
-        path: "/setting/privacy-policy",
+        path: "/privacy-policy",
         element: <PrivacyPolicy />,
       },
       {
-        path: "/setting/terms-and-condition",
+        path: "/terms-and-condition",
         element: <TermsCondition />,
       },
 
