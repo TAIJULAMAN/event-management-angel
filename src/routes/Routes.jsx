@@ -12,6 +12,8 @@ import ProfilePage from "../pages/profile/ProfilePage";
 import Chat from "../pages/Chat/Chat";
 import MediaSocial from "../pages/Media&Social/MediaSocial";
 import ChatManagement from "../pages/ChatManagement/ChatManagement";
+import EventManagement from "../pages/eventManagement/eventManagement";
+import GroupManagement from "../pages/groupManagement/groupManagement";
 
 const router = createBrowserRouter([
   {
@@ -42,6 +44,14 @@ const router = createBrowserRouter([
       {
         path: "/user-details",
         element: <UserDetails />,
+      },
+      {
+        path: "/event-management",
+        element: <EventManagement />,
+      },
+      {
+        path: "/group-management",
+        element: <GroupManagement />,
       },
       {
         path: "/chat",

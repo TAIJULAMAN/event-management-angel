@@ -4,15 +4,18 @@ import { FaRegBookmark, FaRegUser } from "react-icons/fa";
 import { IoMdInformationCircleOutline, IoMdSettings } from "react-icons/io";
 import {
   IoBagAddOutline,
+  IoChatboxEllipsesOutline,
   IoCloseSharp,
   IoLogInOutline,
 } from "react-icons/io5";
 import { RxDashboard } from "react-icons/rx";
-import { MdOutlinePrivacyTip } from "react-icons/md";
+import { MdOutlineEventNote, MdOutlinePrivacyTip } from "react-icons/md";
 import { SlArrowDown } from "react-icons/sl";
 import { GoQuestion } from "react-icons/go";
 import { TbBrandWechat } from "react-icons/tb";
 import { CiBoxList } from "react-icons/ci";
+import { LuUsers } from "react-icons/lu";
+import { GrGroup } from "react-icons/gr";
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
   const location = useLocation();
@@ -46,7 +49,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             <p className="text-lg font-semibold">Dashboard</p>
           </li>
         </Link>
-
         {/* User Management */}
         <Link to="/user-details">
           <li
@@ -55,43 +57,43 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
               : ""
               }`}
           >
-            <FaRegUser className="w-5 h-5" />
+            <LuUsers className="w-5 h-5" />
             <p className="text-lg font-semibold">User Management</p>
           </li>
         </Link>
         {/* Event Management */}
-        <Link to="">
+        <Link to="/event-management">
           <li
-            className={`flex items-center gap-2 mt-5 cursor-pointer transition-all duration-300 ease-in-out ${isActive("/user-details")
+            className={`flex items-center gap-2 mt-5 cursor-pointer transition-all duration-300 ease-in-out ${isActive("/event-management")
               ? "bg-[#89D0C9] text-white px-3 py-3 rounded-lg"
               : ""
               }`}
           >
-            <CiBoxList className="w-5 h-5" />
+            <MdOutlineEventNote className="w-5 h-5" />
             <p className="text-lg font-semibold">Event Management</p>
           </li>
         </Link>
         {/* Group Management */}
-        <Link to="">
+        <Link to="/group-management">
           <li
-            className={`flex items-center gap-2 mt-5 cursor-pointer transition-all duration-300 ease-in-out ${isActive("/user-details")
+            className={`flex items-center gap-2 mt-5 cursor-pointer transition-all duration-300 ease-in-out ${isActive("/group-management")
               ? "bg-[#89D0C9] text-white px-3 py-3 rounded-lg"
               : ""
               }`}
           >
-            <CiBoxList className="w-5 h-5" />
+            <GrGroup className="w-5 h-5" />
             <p className="text-lg font-semibold">Group Management</p>
           </li>
         </Link>
         {/* Chat Management */}
         <Link to="/chat-management">
           <li
-            className={`flex items-center gap-2 mt-5 cursor-pointer transition-all duration-300 ease-in-out ${isActive("/user-details")
+            className={`flex items-center gap-2 mt-5 cursor-pointer transition-all duration-300 ease-in-out ${isActive("/chat-management")
               ? "bg-[#89D0C9] text-white px-3 py-3 rounded-lg"
               : ""
               }`}
           >
-            <CiBoxList className="w-5 h-5" />
+            <IoChatboxEllipsesOutline className="w-5 h-5" />
             <p className="text-lg font-semibold">Chat Management</p>
           </li>
         </Link>
@@ -132,7 +134,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             <p className="text-lg font-semibold">Support Chat</p>
           </li>
         </Link>
-
         <Link to="/privacy-policy">
           <li
             className={`flex items-center gap-2 mt-5 cursor-pointer transition-all duration-300 ease-in-out ${isActive("/privacy-policy")
@@ -144,7 +145,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             <p className="text-lg font-semibold">Privacy Policy</p>
           </li>
         </Link>
-
         <Link to="/terms-and-condition">
           <li
             className={`flex items-center gap-2 mt-5 cursor-pointer transition-all duration-300 ease-in-out ${isActive("/terms-and-condition")

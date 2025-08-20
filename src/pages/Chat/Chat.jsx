@@ -1,79 +1,83 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { RiSendPlane2Fill } from "react-icons/ri";
-import { FiMenu } from "react-icons/fi";
-import { IoImagesOutline } from "react-icons/io5";
+import { FiMenu, FiMoreVertical } from "react-icons/fi";
+import { IoImagesOutline, IoAttachOutline } from "react-icons/io5";
+import { BsEmojiSmile, BsCheck2All } from "react-icons/bs";
+import { MdOnlinePrediction } from "react-icons/md";
 
 const users = [
   {
     id: 1,
-    name: "Patient Mahfud",
-    message: "Thank you Dr.",
-    time: "3:00 PM",
+    name: "Dr. Sarah Johnson",
+    message: "How are you feeling today?",
+    time: "2:45 PM",
     avatar: "https://avatar.iran.liara.run/public/28",
+    online: true,
+    unread: 2,
   },
   {
     id: 2,
-    name: "Patient Mahfud",
-    message: "Thank you Dr.",
-    time: "3:00 PM",
+    name: "Patient Alex Smith",
+    message: "Thank you for the prescription",
+    time: "1:30 PM",
     avatar: "https://avatar.iran.liara.run/public/27",
+    online: false,
+    unread: 0,
   },
   {
     id: 3,
-    name: "Patient Mahfud",
-    message: "Thank you Dr.",
-    time: "3:00 PM",
+    name: "Dr. Michael Brown",
+    message: "Your test results are ready",
+    time: "12:15 PM",
     avatar: "https://avatar.iran.liara.run/public/29",
+    online: true,
+    unread: 1,
   },
   {
     id: 4,
-    name: "Patient Mahfud",
-    message: "Thank you Dr.",
-    time: "3:00 PM",
+    name: "Patient Emma Wilson",
+    message: "When is my next appointment?",
+    time: "11:00 AM",
     avatar: "https://avatar.iran.liara.run/public/30",
+    online: false,
+    unread: 0,
   },
   {
     id: 5,
-    name: "Patient Mahfud",
-    message: "Thank you Dr.",
-    time: "3:00 PM",
+    name: "Dr. Lisa Davis",
+    message: "Please take your medication on time",
+    time: "10:30 AM",
     avatar: "https://avatar.iran.liara.run/public/31",
+    online: true,
+    unread: 3,
   },
   {
     id: 6,
-    name: "Patient Mahfud",
-    message: "Thank you Dr.",
-    time: "3:00 PM",
+    name: "Patient John Doe",
+    message: "I'm feeling much better now",
+    time: "9:45 AM",
     avatar: "https://avatar.iran.liara.run/public/32",
+    online: false,
+    unread: 0,
   },
   {
     id: 7,
-    name: "Patient Mahfud",
-    message: "Thank you Dr.",
-    time: "3:00 PM",
+    name: "Dr. Robert Miller",
+    message: "Let's schedule a follow-up",
+    time: "Yesterday",
     avatar: "https://avatar.iran.liara.run/public/33",
+    online: false,
+    unread: 0,
   },
   {
     id: 8,
-    name: "Patient Mahfud",
-    message: "Thank you Dr.",
-    time: "3:00 PM",
-    avatar: "https://avatar.iran.liara.run/public/31",
-  },
-  {
-    id: 9,
-    name: "Patient Mahfud",
-    message: "Thank you Dr.",
-    time: "3:00 PM",
-    avatar: "https://avatar.iran.liara.run/public/32",
-  },
-  {
-    id: 10,
-    name: "Patient Mahfud",
-    message: "Thank you Dr.",
-    time: "3:00 PM",
-    avatar: "https://avatar.iran.liara.run/public/33",
+    name: "Patient Mary Johnson",
+    message: "Thank you for your help",
+    time: "Yesterday",
+    avatar: "https://avatar.iran.liara.run/public/34",
+    online: true,
+    unread: 0,
   },
 ];
 
