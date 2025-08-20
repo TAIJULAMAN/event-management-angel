@@ -87,10 +87,7 @@ function DashboardPage() {
               <h1 className="text-xl font-semibold">User Growth</h1>
             </div>
             <div className="flex justify-between items-center gap-5 whitespace-nowrap">
-              <div className="flex justify-start items-center text-xs md:text-lg gap-5">
-                <p>Monthly Growth</p>
-                <p className="font-bold">35.80%</p>
-              </div>
+       
               <div className="relative w-full md:w-32">
                 {/* Selected Year Display */}
                 <button

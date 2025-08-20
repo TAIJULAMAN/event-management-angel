@@ -83,166 +83,375 @@ const users = [
 
 const Chat = () => {
   const [selectedUser, setSelectedUser] = useState(users[0]);
-  const [activeTab, setActiveTab] = useState("User");
   const [messages, setMessages] = useState([
     {
-      text: "Don't worry, the pain will pass soon",
-      sender: "me",
-      time: "20-Apr-2024",
+      id: 1,
+      text: "Hello! How are you feeling today?",
+      sender: "them",
+      time: "2:30 PM",
+      status: "read",
     },
-    { text: "Thank you Dr.", sender: "them", time: "20-Apr-2024" },
     {
-      text: "Don't worry, the pain will pass soon",
+      id: 2,
+      text: "I'm feeling much better, thank you for asking!",
       sender: "me",
-      time: "20-Apr-2024",
+      time: "2:32 PM",
+      status: "delivered",
     },
-    { text: "Thank you Dr.", sender: "them", time: "20-Apr-2024" },
     {
-      text: "Don't worry, the pain will pass soon",
-      sender: "me",
-      time: "20-Apr-2024",
+      id: 3,
+      text: "That's great to hear! Please continue taking your medication as prescribed.",
+      sender: "them",
+      time: "2:33 PM",
+      status: "read",
     },
-    { text: "Thank you Dr.", sender: "them", time: "20-Apr-2024" },
+    {
+      id: 4,
+      text: "Will do. When should I schedule my next appointment?",
+      sender: "me",
+      time: "2:35 PM",
+      status: "delivered",
+    },
+    {
+      id: 5,
+      text: "Let me check my calendar and get back to you shortly.",
+      sender: "them",
+      time: "2:36 PM",
+      status: "read",
+    },
   ]);
   const [newMessage, setNewMessage] = useState("");
   const [showSidebar, setShowSidebar] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const messagesEndRef = useRef(null);
+  const fileInputRef = useRef(null);
+
+  const filteredUsers = users.filter(user =>
+    user.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
   const sendMessage = () => {
     if (newMessage.trim()) {
-      setMessages([
-        ...messages,
-        { text: newMessage, sender: "me", time: "Just now" },
-      ]);
+      const newMsg = {
+        id: messages.length + 1,
+        text: newMessage,
+        sender: "me",
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        status: "sent",
+      };
+      setMessages([...messages, newMsg]);
       setNewMessage("");
+
+      // Simulate typing indicator and response
+      setIsTyping(true);
+      setTimeout(() => {
+        setIsTyping(false);
+        const response = {
+          id: messages.length + 2,
+          text: "Thank you for your message. I'll get back to you soon!",
+          sender: "them",
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          status: "delivered",
+        };
+        setMessages(prev => [...prev, response]);
+      }, 2000);
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  };
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const newMsg = {
+        id: messages.length + 1,
+        text: `📎 ${file.name}`,
+        sender: "me",
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        status: "sent",
+        type: "file",
+      };
+      setMessages([...messages, newMsg]);
     }
   };
 
   return (
-    <div className="flex flex-col h-screen bg-white ">
-      <div className="p-5">
-        <h1 className="text-[#0D0D0D] text-start text-3xl font-bold">
-          Messages
-        </h1>
-      
-      </div>
-
-      {/* Header for Mobile */}
-      <div className="flex items-center justify-between p-5 bg-[#00c0b5] text-white md:hidden">
-        <FiMenu
-          className="text-2xl cursor-pointer"
-          onClick={() => setShowSidebar(!showSidebar)}
-        />
-        <h1 className="text-xl font-bold">Messages</h1>
-      </div>
-
-      <div className="flex flex-1">
-        {/* Sidebar - User List */}
-        <div
-          className={`absolute md:relative top-0 left-0 w-64 md:w-96 h-full bg-white md:flex flex-col p-4 transition-all duration-300 z-50 mb-10 ${showSidebar ? "translate-x-0" : "-translate-x-full md:translate-x-0"
-            }`}
-        >
-          <button
-            className="md:hidden self-end mb-4 text-gray-500"
-            onClick={() => setShowSidebar(false)}
-          >
-            ✖
-          </button>
-          <div className="relative mb-5">
-            <AiOutlineSearch
-              className="absolute left-3 top-4 text-[#4F4F59] w-6 h-6"
-              size={20}
-            />
-            <input
-              type="text"
-              className="w-full pl-10 py-4 bg-[#F2F2F2] focus:outline-none"
+    <div className="flex flex-col h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      {/* Header */}
+      <div className="bg-white shadow-sm border-b border-gray-200 p-4 md:p-6">
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
+            Messages
+          </h1>
+          <div className="md:hidden">
+            <FiMenu
+              className="text-2xl cursor-pointer text-gray-600"
+              onClick={() => setShowSidebar(!showSidebar)}
             />
           </div>
-          <div className="overflow-y-auto space-y-2 flex-1">
-            {users.map((user) => (
+        </div>
+      </div>
+
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar - User List */}
+        <div
+          className={`absolute md:relative top-0 left-0 w-80 md:w-96 h-full bg-white shadow-lg md:shadow-none md:border-r border-gray-200 flex flex-col transition-all duration-300 z-50 ${showSidebar ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+            }`}
+        >
+          {/* Mobile close button */}
+          <div className="md:hidden flex justify-end p-4 border-b">
+            <button
+              className="text-gray-500 hover:text-gray-700"
+              onClick={() => setShowSidebar(false)}
+            >
+              ✖
+            </button>
+          </div>
+
+          {/* Search Bar */}
+          <div className="p-4 border-b border-gray-100">
+            <div className="relative">
+              <AiOutlineSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type="text"
+                placeholder="Search conversations..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+              />
+            </div>
+          </div>
+
+          {/* User List */}
+          <div className="flex-1 overflow-y-auto">
+            {filteredUsers.map((user) => (
               <div
                 key={user.id}
-                className="flex items-center gap-3 p-4 cursor-pointer bg-gray-100 rounded-md"
-                onClick={() => setSelectedUser(user)}
+                className={`flex items-center gap-3 p-4 cursor-pointer border-b border-gray-50 hover:bg-gray-50 transition-colors ${selectedUser.id === user.id ? "bg-teal-50 border-r-4 border-r-teal-500" : ""
+                  }`}
+                onClick={() => {
+                  setSelectedUser(user);
+                  setShowSidebar(false);
+                }}
               >
-                <img
-                  src={user.avatar}
-                  alt={user.name}
-                  className="h-12 w-12 rounded-full object-cover"
-                />
-                <div className="flex-1 ">
-                  <h3 className="text-lg font-medium mb-8">{user.name}</h3>
+                <div className="relative">
+                  <img
+                    src={user.avatar}
+                    alt={user.name}
+                    className="h-12 w-12 rounded-full object-cover"
+                  />
+                  {user.online && (
+                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
+                  )}
                 </div>
-                <p className="text-xs text-gray-500 mb-8">{user.time}</p>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-semibold text-gray-900 truncate">{user.name}</h3>
+                    <span className="text-xs text-gray-500">{user.time}</span>
+                  </div>
+                  <p className="text-sm text-gray-600 truncate mt-1">{user.message}</p>
+                </div>
+                {user.unread > 0 && (
+                  <div className="bg-teal-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {user.unread}
+                  </div>
+                )}
               </div>
             ))}
           </div>
         </div>
 
         {/* Main Chat Area */}
-        <div className="flex-1 flex flex-col mb-10 md:border-l-[10px] md:border-white">
-          <div className="px-5 py-2 bg-[#00C0B5] text-white flex items-center gap-3 md:rounded-lg">
-            <img
-              src="https://avatar.iran.liara.run/public/28"
-              alt={selectedUser.name}
-              className="h-20 w-20 rounded-full object-cover"
-            />
-            <h2 className="text-xl font-medium mb-8">{selectedUser.name}</h2>
+        <div className="flex-1 flex flex-col bg-white">
+          {/* Chat Header */}
+          <div className="bg-gradient-to-r from-teal-500 to-teal-600 text-white p-4 shadow-sm">
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <img
+                  src={selectedUser.avatar}
+                  alt={selectedUser.name}
+                  className="h-12 w-12 rounded-full object-cover border-2 border-white/20"
+                />
+                {selectedUser.online && (
+                  <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 border-2 border-white rounded-full"></div>
+                )}
+              </div>
+              <div className="flex-1">
+                <h2 className="text-lg font-semibold">{selectedUser.name}</h2>
+                <p className="text-sm text-teal-100">
+                  {selectedUser.online ? "Online" : "Last seen " + selectedUser.time}
+                </p>
+              </div>
+              <button className="p-2 hover:bg-white/10 rounded-full transition-colors">
+                <FiMoreVertical className="w-5 h-5" />
+              </button>
+            </div>
           </div>
-          <div className="flex-1 overflow-auto bg-[#E6FAF9] p-4 space-y-4">
-            {messages.map((msg, i) => (
+
+          {/* Messages Area */}
+          <div className="flex-1 overflow-y-auto bg-gray-50 p-4 space-y-4">
+            {messages.map((msg) => (
               <div
-                key={i}
-                className={`flex ${msg.sender === "me" ? "justify-end" : "justify-start"
-                  }`}
+                key={msg.id}
+                className={`flex ${msg.sender === "me" ? "justify-end" : "justify-start"}`}
               >
-                <div className="bg-white rounded-xl p-5 max-w-sm">
-                  <p className="text-xl text-[#4F4F59]  text-left">
-                    {msg.text}
-                  </p>
-                  <p className="text-lg text-[#4F4F59]  text-right">
-                    {msg.time}
-                  </p>
+                <div
+                  className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl shadow-sm ${msg.sender === "me"
+                      ? "bg-teal-500 text-white rounded-br-md"
+                      : "bg-white text-gray-800 border rounded-bl-md"
+                    }`}
+                >
+                  <p className="text-sm leading-relaxed">{msg.text}</p>
+                  <div className="flex items-center justify-between mt-2 gap-2">
+                    <span className={`text-xs ${msg.sender === "me" ? "text-teal-100" : "text-gray-500"}`}>
+                      {msg.time}
+                    </span>
+                    {msg.sender === "me" && (
+                      <div className="flex items-center">
+                        {msg.status === "sent" && <div className="w-1 h-1 bg-teal-200 rounded-full"></div>}
+                        {msg.status === "delivered" && <BsCheck2All className="w-3 h-3 text-teal-200" />}
+                        {msg.status === "read" && <BsCheck2All className="w-3 h-3 text-white" />}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}
-          </div>
-          <div className="relative p-5 bg-[#E6FAF9] flex gap-2 text-[#4F4F59]">
-            <input
-              type="text"
-              placeholder="Type your message"
-              className="flex-1 px-2 py-5 border rounded-full focus:outline-none bg-white placeholder:pl-5"
-            />
-            <button className="p-3 bg-gray-100 absolute right-22 bottom-7 rounded-full">
-              <IoImagesOutline size={20} className="w-5 h-5" />
 
-            </button>
-            <button
-              onClick={sendMessage}
-              className="p-3.5 bg-teal-500 hover:bg-teal-600 text-white absolute right-8 bottom-7 rounded-full"
-            >
-              <RiSendPlane2Fill size={20} className="w-5 h-5" />
-            </button>
+            {/* Typing Indicator */}
+            {isTyping && (
+              <div className="flex justify-start">
+                <div className="bg-white border rounded-2xl rounded-bl-md px-4 py-3 shadow-sm">
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  </div>
+                </div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+
+          {/* Message Input */}
+          <div className="bg-white border-t border-gray-200 p-4">
+            <div className="flex items-end gap-3">
+              <div className="flex-1 relative">
+                <textarea
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder="Type your message..."
+                  className="w-full px-4 py-3 pr-12 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent resize-none max-h-32"
+                  rows="1"
+                />
+              </div>
+              <div className="flex gap-2">
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileUpload}
+                  className="hidden"
+                  accept="image/*,application/pdf,.doc,.docx"
+                />
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="p-3 text-gray-500 hover:text-teal-600 hover:bg-teal-50 rounded-full transition-colors"
+                >
+                  <IoImagesOutline className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={sendMessage}
+                  disabled={!newMessage.trim()}
+                  className={`p-3 rounded-full transition-all ${newMessage.trim()
+                      ? "bg-teal-500 hover:bg-teal-600 text-white shadow-lg"
+                      : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                    }`}
+                >
+                  <RiSendPlane2Fill className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Right Sidebar */}
-        <div className="hidden lg:flex flex-col border-l-[10px] border-white mb-10">
-          <div className="w-[350px]   p-2 bg-[#E6FAF9] rounded-lg h-full">
-            <h3 className="text-xl text-[#4F4F59] font-medium mb-2 mt-5">
-              Media(1)
-            </h3>
-            <img
-              src="/3.jpg"
-              alt="Media"
-              className="rounded w-20 h-20 object-cover"
-            />
-            <div className="flex flex-col justify-center items-center py-3 bg-white mt-[300px]">
-              <h3 className="text-xl text-[#4F4F59] font-medium">
-                Attachments(1)
-              </h3>
+        {/* Right Sidebar - Media & Files */}
+        <div className="hidden lg:flex flex-col w-80 bg-white border-l border-gray-200">
+          <div className="p-4 border-b border-gray-100">
+            <h3 className="font-semibold text-gray-800">Chat Details</h3>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-4 space-y-6">
+            {/* User Info */}
+            <div className="text-center">
+              <img
+                src={selectedUser.avatar}
+                alt={selectedUser.name}
+                className="h-20 w-20 rounded-full mx-auto mb-3 object-cover"
+              />
+              <h4 className="font-semibold text-gray-800">{selectedUser.name}</h4>
+              <p className="text-sm text-gray-500">
+                {selectedUser.online ? "Online now" : "Last seen " + selectedUser.time}
+              </p>
             </div>
-            <div className="flex flex-col justify-center items-center bg-white py-3 mt-2">
-              <p className="text-sm truncate">document.pdf</p>
-              <p className="text-xs text-[#4F4F59]">2.00 MB</p>
+
+            {/* Media Section */}
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="font-medium text-gray-700">Media</h4>
+                <span className="text-sm text-gray-500">12</span>
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <div key={i} className="aspect-square bg-gray-200 rounded-lg overflow-hidden">
+                    <img
+                      src={`https://picsum.photos/100/100?random=${i}`}
+                      alt="Media"
+                      className="w-full h-full object-cover hover:scale-105 transition-transform cursor-pointer"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Files Section */}
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="font-medium text-gray-700">Files</h4>
+                <span className="text-sm text-gray-500">3</span>
+              </div>
+              <div className="space-y-3">
+                {[
+                  { name: "Medical_Report.pdf", size: "2.4 MB", type: "pdf" },
+                  { name: "Prescription.jpg", size: "1.2 MB", type: "image" },
+                  { name: "Lab_Results.docx", size: "856 KB", type: "doc" },
+                ].map((file, i) => (
+                  <div key={i} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
+                    <div className="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center">
+                      <IoAttachOutline className="w-5 h-5 text-teal-600" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-sm text-gray-800 truncate">{file.name}</p>
+                      <p className="text-xs text-gray-500">{file.size}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>

@@ -16,6 +16,7 @@ import { TbBrandWechat } from "react-icons/tb";
 import { CiBoxList } from "react-icons/ci";
 import { LuUsers } from "react-icons/lu";
 import { GrGroup } from "react-icons/gr";
+import { TiMediaFastForwardOutline } from "react-icons/ti";
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
   const location = useLocation();
@@ -97,15 +98,15 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             <p className="text-lg font-semibold">Chat Management</p>
           </li>
         </Link>
-        {/*  Service */}
+        {/*  Media & Social*/}
         <Link to="/media-social">
           <li
-            className={`flex items-center gap-2 mt-5 cursor-pointer transition-all duration-300 ease-in-out ${isActive("/services")
+            className={`flex items-center gap-2 mt-5 cursor-pointer transition-all duration-300 ease-in-out ${isActive("/media-social")
               ? "bg-[#89D0C9] text-white px-3 py-3 rounded-lg"
               : ""
               }`}
           >
-            <IoBagAddOutline className="w-5 h-5" />
+            <TiMediaFastForwardOutline className="w-5 h-5" />
             <p className="text-lg font-semibold">Media & Social</p>
           </li>
         </Link>
