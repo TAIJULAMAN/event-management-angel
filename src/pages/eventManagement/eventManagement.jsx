@@ -29,14 +29,307 @@ function EventManagement() {
         {
             key: "1",
             no: "1",
-            name: "John Doe",
-            image: "",
+            name: "React Summit 2025",
+            image: "https://i.ibb.co.com/3Ypr4Q7T/Group-290463.png",
             owner: "Jane Cooper",
             type: "upcoming",
-            category: "johndoe@example.com",
+            category: "reactsummit@example.com",
             location: "New York, USA",
         },
+        {
+            key: "2",
+            no: "2",
+            name: "AI & Machine Learning Expo",
+            image: "https://i.ibb.co.com/bMzdpML5/Group-290462.png",
+            owner: "Liam Johnson",
+            type: "completed",
+            category: "aimlexpo@example.com",
+            location: "Los Angeles, USA",
+        },
+        {
+            key: "3",
+            no: "3",
+            name: "Startup Grind Conference",
+            image: "https://i.ibb.co.com/nNqLGvXs/Group-290458-1.png",
+            owner: "Sophia Davis",
+            type: "ongoing",
+            category: "startupgrind@example.com",
+            location: "San Francisco, USA",
+        },
+        {
+            key: "4",
+            no: "4",
+            name: "Tech Innovators Meetup",
+            image: "https://i.ibb.co.com/2Yp1Wccv/Group-290459.png",
+            owner: "Ethan Wilson",
+            type: "upcoming",
+            category: "techmeetup@example.com",
+            location: "Seattle, USA",
+        },
+        {
+            key: "5",
+            no: "5",
+            name: "Cloud Computing World",
+            image: "https://i.ibb.co.com/pvmXxyJc/Group-290458.png",
+            owner: "Ava Martinez",
+            type: "completed",
+            category: "cloudworld@example.com",
+            location: "Chicago, USA",
+        },
+        {
+            key: "6",
+            no: "6",
+            name: "JavaScript Developers Conference",
+            image: "https://i.ibb.co.com/3Ypr4Q7T/Group-290463.png",
+            owner: "James Anderson",
+            type: "upcoming",
+            category: "jsconf@example.com",
+            location: "Boston, USA",
+        },
+        {
+            key: "7",
+            no: "7",
+            name: "Digital Marketing Summit",
+            image: "https://i.ibb.co.com/3Ypr4Q7T/Group-290463.png",
+            owner: "Charlotte Thomas",
+            type: "ongoing",
+            category: "dmsummit@example.com",
+            location: "Miami, USA",
+        },
+        {
+            key: "8",
+            no: "8",
+            name: "E-commerce Growth Expo",
+            image: "https://i.ibb.co.com/pvmXxyJc/Group-290458.png",
+            owner: "Benjamin Lee",
+            type: "completed",
+            category: "ecomexpo@example.com",
+            location: "Houston, USA",
+        },
+        {
+            key: "9",
+            no: "9",
+            name: "Data Science & Analytics Forum",
+            image: "https://i.ibb.co.com/2Yp1Wccv/Group-290459.png",
+            owner: "Amelia Hall",
+            type: "upcoming",
+            category: "datascienceforum@example.com",
+            location: "Denver, USA",
+        },
+        {
+            key: "10",
+            no: "10",
+            name: "Cybersecurity Essentials Workshop",
+            image: "https://i.ibb.co.com/3Ypr4Q7T/Group-290463.png",
+            owner: "Lucas Allen",
+            type: "completed",
+            category: "cyberworkshop@example.com",
+            location: "San Diego, USA",
+        },
+        {
+            key: "11",
+            no: "11",
+            name: "Blockchain & Web3 Conference",
+            image: "https://source.unsplash.com/800x600/?blockchain,web3&sig=11",
+            owner: "Harper Scott",
+            type: "upcoming",
+            category: "blockchainconf@example.com",
+            location: "Austin, USA",
+        },
+        {
+            key: "12",
+            no: "12",
+            name: "Product Management Bootcamp",
+            image: "https://source.unsplash.com/800x600/?product,management&sig=12",
+            owner: "Henry Green",
+            type: "ongoing",
+            category: "pmbootcamp@example.com",
+            location: "Orlando, USA",
+        },
+        {
+            key: "13",
+            no: "13",
+            name: "UI/UX Design Summit",
+            image: "https://source.unsplash.com/800x600/?ui,ux,design&sig=13",
+            owner: "Evelyn Baker",
+            type: "completed",
+            category: "uiuxsummit@example.com",
+            location: "Dallas, USA",
+        },
+        {
+            key: "14",
+            no: "14",
+            name: "Mobile App Hackathon",
+            image: "https://source.unsplash.com/800x600/?mobile,app,hackathon&sig=14",
+            owner: "Sebastian Nelson",
+            type: "upcoming",
+            category: "apphackathon@example.com",
+            location: "Phoenix, USA",
+        },
+        {
+            key: "15",
+            no: "15",
+            name: "Cloud Security Expo",
+            image: "https://source.unsplash.com/800x600/?cloud,security&sig=15",
+            owner: "Victoria Carter",
+            type: "completed",
+            category: "cloudsec@example.com",
+            location: "Atlanta, USA",
+        },
+        {
+            key: "16",
+            no: "16",
+            name: "VR & AR Developers Meetup",
+            image: "https://source.unsplash.com/800x600/?vr,ar,developers&sig=16",
+            owner: "David Mitchell",
+            type: "upcoming",
+            category: "vrarmeetup@example.com",
+            location: "San Jose, USA",
+        },
+        {
+            key: "17",
+            no: "17",
+            name: "Next.js Global Conference",
+            image: "https://source.unsplash.com/800x600/?nextjs,conference&sig=17",
+            owner: "Grace Roberts",
+            type: "ongoing",
+            category: "nextjsconf@example.com",
+            location: "Portland, USA",
+        },
+        {
+            key: "18",
+            no: "18",
+            name: "Healthcare Tech Innovation Forum",
+            image: "https://source.unsplash.com/800x600/?healthcare,innovation&sig=18",
+            owner: "Elijah Phillips",
+            type: "completed",
+            category: "healthtechforum@example.com",
+            location: "Washington, USA",
+        },
+        {
+            key: "19",
+            no: "19",
+            name: "Python Developers Summit",
+            image: "https://source.unsplash.com/800x600/?python,developers&sig=19",
+            owner: "Scarlett Evans",
+            type: "upcoming",
+            category: "pythonsummit@example.com",
+            location: "Baltimore, USA",
+        },
+        {
+            key: "20",
+            no: "20",
+            name: "Digital Health Conference",
+            image: "https://source.unsplash.com/800x600/?digital,health&sig=20",
+            owner: "Carter Edwards",
+            type: "completed",
+            category: "digitalhealth@example.com",
+            location: "Philadelphia, USA",
+        },
+        {
+            key: "21",
+            no: "21",
+            name: "DevOps World Summit",
+            image: "https://source.unsplash.com/800x600/?devops,summit&sig=21",
+            owner: "Penelope Stewart",
+            type: "ongoing",
+            category: "devopsworld@example.com",
+            location: "Minneapolis, USA",
+        },
+        {
+            key: "22",
+            no: "22",
+            name: "AI in Finance Forum",
+            image: "https://source.unsplash.com/800x600/?ai,finance&sig=22",
+            owner: "Wyatt Morris",
+            type: "upcoming",
+            category: "aifinance@example.com",
+            location: "Charlotte, USA",
+        },
+        {
+            key: "23",
+            no: "23",
+            name: "Gaming Expo & Esports Fest",
+            image: "https://source.unsplash.com/800x600/?gaming,esports&sig=23",
+            owner: "Zoey Bell",
+            type: "completed",
+            category: "gamingfest@example.com",
+            location: "Las Vegas, USA",
+        },
+        {
+            key: "24",
+            no: "24",
+            name: "Figma Design Hackathon",
+            image: "https://source.unsplash.com/800x600/?figma,hackathon&sig=24",
+            owner: "Nathan Cook",
+            type: "upcoming",
+            category: "figmahack@example.com",
+            location: "San Antonio, USA",
+        },
+        {
+            key: "25",
+            no: "25",
+            name: "Big Data & AI World",
+            image: "https://source.unsplash.com/800x600/?bigdata,ai&sig=25",
+            owner: "Hannah Bailey",
+            type: "completed",
+            category: "bigdataai@example.com",
+            location: "Columbus, USA",
+        },
+        {
+            key: "26",
+            no: "26",
+            name: "Agile Project Management Summit",
+            image: "https://source.unsplash.com/800x600/?agile,project&sig=26",
+            owner: "Joshua Rivera",
+            type: "ongoing",
+            category: "agilesummit@example.com",
+            location: "Nashville, USA",
+        },
+        {
+            key: "27",
+            no: "27",
+            name: "Open Source Contributors Meetup",
+            image: "https://source.unsplash.com/800x600/?opensource,developers&sig=27",
+            owner: "Lily Kelly",
+            type: "upcoming",
+            category: "opensourcemeet@example.com",
+            location: "Kansas City, USA",
+        },
+        {
+            key: "28",
+            no: "28",
+            name: "SaaS Founders Networking Event",
+            image: "https://source.unsplash.com/800x600/?saas,networking&sig=28",
+            owner: "Owen Ward",
+            type: "completed",
+            category: "saasfounders@example.com",
+            location: "Salt Lake City, USA",
+        },
+        {
+            key: "29",
+            no: "29",
+            name: "Content Creators Expo",
+            image: "https://source.unsplash.com/800x600/?content,creators&sig=29",
+            owner: "Aria Torres",
+            type: "upcoming",
+            category: "contentexpo@example.com",
+            location: "Tampa, USA",
+        },
+        {
+            key: "30",
+            no: "30",
+            name: "AI Robotics Hackathon",
+            image: "https://source.unsplash.com/800x600/?ai,robotics&sig=30",
+            owner: "Dylan Foster",
+            type: "completed",
+            category: "airobotics@example.com",
+            location: "Pittsburgh, USA",
+        },
     ];
+
+
+
     const columns = [
         {
             title: "No",
@@ -44,15 +337,22 @@ function EventManagement() {
             key: "no",
         },
         {
+            title: "Image",
+            dataIndex: "image",
+            key: "image",
+            render: (_, record) => (
+                <img
+                    src={record.image}
+                    className="w-20 h-10 object-cover"
+                    alt="User Avatar"
+                />
+            ),
+        },
+        {
             title: "Name",
             key: "name",
             render: (_, record) => (
                 <div className="flex items-center gap-3">
-                    <img
-                        src={`https://avatar.iran.liara.run/public/${record.key}`}
-                        className="w-10 h-10 object-cover rounded-full"
-                        alt="User Avatar"
-                    />
                     <div className="flex flex-col gap-[2px]">
                         <span className="leading-none">{record.name}</span>
                         {/* <span className="leading-none text-gray-500 text-sm">{record.email}</span> */}
@@ -61,19 +361,19 @@ function EventManagement() {
             ),
         },
         {
-            title: "Role",
-            dataIndex: "role",
-            key: "role",
+            title: "Owner",
+            dataIndex: "owner",
+            key: "owner",
         },
         {
-            title: "Phone Number",
-            dataIndex: "phone",
-            key: "phone",
+            title: "Type",
+            dataIndex: "type",
+            key: "type",
         },
         {
-            title: "Email",
-            dataIndex: "email",
-            key: "email",
+            title: "Category",
+            dataIndex: "category",
+            key: "category",
         },
         {
             title: "Location",
@@ -152,7 +452,7 @@ function EventManagement() {
                             Are you sure!
                         </h1>
                         <p className="text-xl text-center mt-5">
-                            Do you want to delete this user profile?
+                            Do you want to delete this event?
                         </p>
                         <div className="text-center py-5 w-full">
                             <button
@@ -181,63 +481,64 @@ function EventManagement() {
                                 <div className="flex items-center gap-6">
                                     <div className="relative">
                                         <img
-                                            src={`https://avatar.iran.liara.run/public/${selectedUser.key}`}
+                                            src={selectedUser.image}
                                             alt={selectedUser.name}
-                                            className="w-24 h-24 rounded-full border-4 border-white shadow-lg object-cover"
+                                            className="w-[200px] h-24 rounded-lg border-4 border-white shadow-lg object-cover"
                                         />
+                                        <div className={`absolute -top-2 -right-2 px-2 py-1 rounded-full text-xs font-bold text-white ${selectedUser.type === 'upcoming' ? 'bg-blue-500' :
+                                                selectedUser.type === 'ongoing' ? 'bg-green-500' : 'bg-gray-500'
+                                            }`}>
+                                            {selectedUser.type.toUpperCase()}
+                                        </div>
                                     </div>
                                     <div className="text-white">
                                         <h2 className="text-3xl font-bold mb-2">{selectedUser.name}</h2>
                                         <div className="flex items-center gap-3 mb-2">
-                                            <span className="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-medium">
-                                                {selectedUser.role}
-                                            </span>
-
                                         </div>
-
+                                        <p className="text-white/90">Managed by {selectedUser.owner}</p>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Content sections */}
                             <div className="space-y-6">
-                                {/* Contact Information */}
+                                {/* Event Information */}
                                 <div>
                                     <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
                                         <div className="w-2 h-2 bg-[#00c0b5] rounded-full"></div>
-                                        Contact Information
+                                        Event Information
                                     </h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="bg-white border border-gray-200 p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                                                    <span className="text-blue-600 text-lg">📞</span>
+                                                    <span className="text-blue-600 text-lg">👤</span>
                                                 </div>
                                                 <div>
-                                                    <h4 className="text-sm font-medium text-gray-600">Phone Number</h4>
-                                                    <p className="text-lg font-semibold text-gray-800">{selectedUser.phone}</p>
+                                                    <h4 className="text-sm font-medium text-gray-600">Event Owner</h4>
+                                                    <p className="text-lg font-semibold text-gray-800">{selectedUser.owner}</p>
                                                 </div>
                                             </div>
                                         </div>
                                         <div className="bg-white border border-gray-200 p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                                                    <span className="text-purple-600 text-lg">📧</span>
+                                                    <span className="text-purple-600 text-lg">🏷️</span>
                                                 </div>
                                                 <div>
-                                                    <h4 className="text-sm font-medium text-gray-600">Email Address</h4>
-                                                    <p className="text-lg font-semibold text-gray-800">{selectedUser.email}</p>
+                                                    <h4 className="text-sm font-medium text-gray-600">Category</h4>
+                                                    <p className="text-lg font-semibold text-gray-800">{selectedUser.category}</p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                {/* Location & Additional Info */}
+                                {/* Location & Status */}
                                 <div>
                                     <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
                                         <div className="w-2 h-2 bg-[#00c0b5] rounded-full"></div>
-                                        Location & Details
+                                        Location & Status
                                     </h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="bg-white border border-gray-200 p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
@@ -253,39 +554,55 @@ function EventManagement() {
                                         </div>
                                         <div className="bg-white border border-gray-200 p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-                                                    <span className="text-orange-600 text-lg">⏰</span>
+                                                <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${selectedUser.type === 'upcoming' ? 'bg-blue-100' :
+                                                        selectedUser.type === 'ongoing' ? 'bg-green-100' : 'bg-gray-100'
+                                                    }`}>
+                                                    <span className={`text-lg ${selectedUser.type === 'upcoming' ? 'text-blue-600' :
+                                                            selectedUser.type === 'ongoing' ? 'text-green-600' : 'text-gray-600'
+                                                        }`}>
+                                                        {selectedUser.type === 'upcoming' ? '🕒' :
+                                                            selectedUser.type === 'ongoing' ? '▶️' : '✅'}
+                                                    </span>
                                                 </div>
                                                 <div>
-                                                    <h4 className="text-sm font-medium text-gray-600">Member Since</h4>
-                                                    <p className="text-lg font-semibold text-gray-800">January 2024</p>
+                                                    <h4 className="text-sm font-medium text-gray-600">Event Status</h4>
+                                                    <p className="text-lg font-semibold text-gray-800 capitalize">{selectedUser.type}</p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                {/* Activity Stats */}
+                                {/* Event Statistics */}
                                 <div>
                                     <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
                                         <div className="w-2 h-2 bg-[#00c0b5] rounded-full"></div>
-                                        Activity Overview
+                                        Event Statistics
                                     </h3>
                                     <div className="grid grid-cols-3 gap-4">
                                         <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-xl text-center">
-                                            <div className="text-2xl font-bold text-blue-600 mb-1">24</div>
-                                            <div className="text-sm text-blue-700">Events Attended</div>
+                                            <div className="text-2xl font-bold text-blue-600 mb-1">
+                                                {selectedUser.type === 'upcoming' ? '150' :
+                                                    selectedUser.type === 'ongoing' ? '89' : '234'}
+                                            </div>
+                                            <div className="text-sm text-blue-700">Registered</div>
                                         </div>
                                         <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-xl text-center">
-                                            <div className="text-2xl font-bold text-green-600 mb-1">12</div>
-                                            <div className="text-sm text-green-700">Events Hosted</div>
+                                            <div className="text-2xl font-bold text-green-600 mb-1">
+                                                {selectedUser.type === 'upcoming' ? '0' :
+                                                    selectedUser.type === 'ongoing' ? '67' : '198'}
+                                            </div>
+                                            <div className="text-sm text-green-700">Attended</div>
                                         </div>
                                         <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-xl text-center">
-                                            <div className="text-2xl font-bold text-purple-600 mb-1">4.8</div>
+                                            <div className="text-2xl font-bold text-purple-600 mb-1">
+                                                {selectedUser.type === 'completed' ? '4.7' : 'N/A'}
+                                            </div>
                                             <div className="text-sm text-purple-700">Rating</div>
                                         </div>
                                     </div>
                                 </div>
+
                             </div>
 
                             {/* Action buttons */}
