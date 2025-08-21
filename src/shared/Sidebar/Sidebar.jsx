@@ -10,7 +10,7 @@ import {
 } from "react-icons/io5";
 import { RxDashboard } from "react-icons/rx";
 import { MdOutlineEventNote, MdOutlinePrivacyTip } from "react-icons/md";
-import { TbBrandWechat } from "react-icons/tb";
+import { TbBrandWechat, TbReport } from "react-icons/tb";
 import { LuUsers } from "react-icons/lu";
 import { GrGroup } from "react-icons/gr";
 import { TiMediaFastForwardOutline } from "react-icons/ti";
@@ -130,6 +130,17 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             <p className="text-lg font-semibold">Terms and Conditions</p>
           </li>
         </Link>
+        <Link to="/reports">
+          <li
+            className={`flex items-center gap-2 mt-5 cursor-pointer transition-all duration-300 ease-in-out ${isActive("/reports")
+              ? "bg-[#89D0C9] text-white px-3 py-3 rounded-lg"
+              : ""
+              }`}
+          >
+            <TbReport className="w-5 h-5 text-lg font-semibold" />
+            <p className="text-lg font-semibold">Reports</p>
+          </li>
+        </Link>
 
 
 
@@ -139,9 +150,9 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       <div className="absolute mt-8 md:mt-20 mmd:mt-20 w-full px-5">
         <Link to="/sign-in">
           <button
-            className="flex items-center gap-4 w-full py-3 rounded-lg bg-[#89D0C9] text-white px-3 py-3 rounded-lg duration-200 text-white justify-center "
+            className="flex items-center gap-4 w-full py-3 rounded-lg bg-[#89D0C9]  px-3 duration-200 text-white justify-center "
           >
-            <IoLogInOutline className="w-5 h-5 font-bold" />
+            <TbReport className="w-5 h-5 font-bold" />
             <span>Logout</span>
           </button>
         </Link>

@@ -14,6 +14,7 @@ import MediaSocial from "../pages/Media&Social/MediaSocial";
 import ChatManagement from "../pages/ChatManagement/ChatManagement";
 import EventManagement from "../pages/eventManagement/eventManagement";
 import GroupManagement from "../pages/groupManagement/groupManagement";
+import Reports from "../pages/Reports/Reports";
 
 const router = createBrowserRouter([
   {
@@ -68,6 +69,10 @@ const router = createBrowserRouter([
       {
         path: "/terms-and-condition",
         element: <TermsCondition />,
+      },
+      {
+        path: "/reports",
+        element: <Reports />,
       },
 
       //  navbar profile
