@@ -14,7 +14,7 @@ function ProfilePage() {
         </h3>
         <div className="mx-auto flex flex-col justify-center items-center">
           {/* Profile Picture Section */}
-          <div className="flex justify-center items-center bg-[#FF0000] mt-5 text-white w-[900px] mx-auto p-5 gap-5 rounded-lg">
+          <div className="flex justify-center items-center bg-[#00c0b5] mt-5 text-white w-[900px] mx-auto p-5 gap-5 rounded-lg">
             <div className="relative">
               <div className="w-[122px] h-[122px] bg-gray-300 rounded-full border-4 border-white shadow-xl flex justify-center items-center">
                 <img
@@ -43,7 +43,7 @@ function ProfilePage() {
               onClick={() => setActiveTab("editProfile")}
               className={`cursor-pointer pb-1 ${
                 activeTab === "editProfile"
-                  ? "text-[#FF0000] border-b-2 border-[#FF0000]"
+                  ? "text-[#00c0b5] border-b-2 border-[#00c0b5]"
                   : "text-[#6A6D76]"
               }`}
             >
@@ -53,7 +53,7 @@ function ProfilePage() {
               onClick={() => setActiveTab("changePassword")}
               className={`cursor-pointer pb-1 ${
                 activeTab === "changePassword"
-                  ? "text-[#FF0000] border-b-2 border-[#FF0000]"
+                  ? "text-[#00c0b5] border-b-2 border-[#00c0b5]"
                   : "text-[#6A6D76]"
               }`}
             >

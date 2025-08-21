@@ -95,7 +95,7 @@ function ChangePass() {
           </div>
         </div>
         <div className="text-center py-5">
-          <button className="bg-[#FF0000] text-white font-semibold w-full py-3 rounded-md">
+          <button className="bg-[#00c0b5] text-white font-semibold w-full py-3 rounded-md">
             Save & Change
           </button>
         </div>
