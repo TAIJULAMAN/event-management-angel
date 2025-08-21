@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { SearchOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Modal, Pagination } from 'antd';
 
@@ -196,7 +196,7 @@ export default function ChatManagement() {
               Are you sure!
             </h1>
             <p className="text-lg text-center mt-3">
-              Do you want to delete the "{selectedGroup?.name}" group?
+              Do you want to delete the {selectedGroup?.name} group?
             </p>
             <div className="flex justify-center gap-4 py-5 w-full">
               <button
