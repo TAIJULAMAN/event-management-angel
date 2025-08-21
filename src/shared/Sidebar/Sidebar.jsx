@@ -83,10 +83,10 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             <p className="text-lg font-semibold">Media & Social</p>
           </li>
         </Link>
-        {/* Add Roles */}
-        <Link to="/roles">
+        {/* Interactivity */}
+        <Link to="/interactivity">
           <li
-            className={`flex items-center gap-2 mt-5 cursor-pointer transition-all duration-300 ease-in-out ${isActive("/roles")
+            className={`flex items-center gap-2 mt-5 cursor-pointer transition-all duration-300 ease-in-out ${isActive("/interactivity")
               ? "bg-[#89D0C9] text-white px-3 py-3 rounded-lg"
               : ""
               }`}
