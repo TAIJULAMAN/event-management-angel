@@ -43,7 +43,7 @@ function EditProfile() {
         </div>
 
         <div className="text-center py-5">
-          <button className="bg-[#FF0000] text-white font-semibold w-full py-3 rounded-lg">
+          <button className="bg-[#00c0b5] text-white font-semibold w-full py-3 rounded-lg">
           Save & Change
           </button>
         </div>

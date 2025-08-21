@@ -6,11 +6,13 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { FaRegEye } from "react-icons/fa";
 import { BiMessage } from "react-icons/bi";
 import { LuMessageSquareText } from "react-icons/lu";
+import { useNavigate } from "react-router-dom";
 
 function Reports() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const navigate = useNavigate();
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -32,273 +34,244 @@ function Reports() {
       key: "1",
       no: "1",
       name: "John Doe",
-      role: "Host",
-      phone: "+1 9876543210",
-      email: "johndoe@example.com",
-      location: "New York, USA",
+      reason: "The content is irrelevant.",
+      reportedFrom: "Event page",
+      type: "Spam/Scam",
     },
     {
       key: "2",
       no: "2",
-      name: "Emma Smith",
-      role: "Driver",
-      phone: "+1 9876543211",
-      email: "emmasmith@example.com",
-      location: "Los Angeles, USA",
+      name: "Jane Smith",
+      reason: "Contains inappropriate language.",
+      reportedFrom: "User profile",
+      type: "Abusive Content",
     },
     {
       key: "3",
       no: "3",
-      name: "Liam Johnson",
-      role: "Manager",
-      phone: "+1 9876543212",
-      email: "liamjohnson@example.com",
-      location: "Chicago, USA",
+      name: "Robert Brown",
+      reason: "Misleading information provided.",
+      reportedFrom: "Dashboard",
+      type: "Fake Information",
     },
     {
       key: "4",
       no: "4",
-      name: "Olivia Brown",
-      role: "Supervisor",
-      phone: "+1 9876543213",
-      email: "oliviabrown@example.com",
-      location: "Houston, USA",
+      name: "Emily Johnson",
+      reason: "Harassment in the comments section.",
+      reportedFrom: "Comment section",
+      type: "Harassment",
     },
     {
       key: "5",
       no: "5",
-      name: "Noah Davis",
-      role: "Host",
-      phone: "+1 9876543214",
-      email: "noahdavis@example.com",
-      location: "Phoenix, USA",
+      name: "Michael Wilson",
+      reason: "Repeated posting of promotional links.",
+      reportedFrom: "Forum",
+      type: "Spam/Scam",
     },
     {
       key: "6",
       no: "6",
-      name: "Sophia Miller",
-      role: "Driver",
-      phone: "+1 9876543215",
-      email: "sophiamiller@example.com",
-      location: "Philadelphia, USA",
+      name: "Sophia Taylor",
+      reason: "Impersonating another user.",
+      reportedFrom: "User profile",
+      type: "Identity Theft",
     },
     {
       key: "7",
       no: "7",
-      name: "James Wilson",
-      role: "Manager",
-      phone: "+1 9876543216",
-      email: "jameswilson@example.com",
-      location: "San Antonio, USA",
+      name: "William Anderson",
+      reason: "Posting explicit images.",
+      reportedFrom: "Gallery",
+      type: "Adult Content",
     },
     {
       key: "8",
       no: "8",
-      name: "Isabella Moore",
-      role: "Supervisor",
-      phone: "+1 9876543217",
-      email: "isabellamoore@example.com",
-      location: "San Diego, USA",
+      name: "Olivia Thomas",
+      reason: "Promoting harmful activities.",
+      reportedFrom: "Blog page",
+      type: "Harmful Content",
     },
     {
       key: "9",
       no: "9",
-      name: "Benjamin Taylor",
-      role: "Host",
-      phone: "+1 9876543218",
-      email: "benjamintaylor@example.com",
-      location: "Dallas, USA",
+      name: "James Martinez",
+      reason: "Spreading political misinformation.",
+      reportedFrom: "News feed",
+      type: "Fake Information",
     },
     {
       key: "10",
       no: "10",
-      name: "Mia Anderson",
-      role: "Driver",
-      phone: "+1 9876543219",
-      email: "miaanderson@example.com",
-      location: "San Jose, USA",
+      name: "Ava White",
+      reason: "Threatening another user.",
+      reportedFrom: "Direct messages",
+      type: "Harassment",
     },
     {
       key: "11",
       no: "11",
-      name: "Elijah Thomas",
-      role: "Manager",
-      phone: "+1 9876543220",
-      email: "elijahthomas@example.com",
-      location: "Austin, USA",
+      name: "Ethan Harris",
+      reason: "Using offensive slurs repeatedly.",
+      reportedFrom: "Group chat",
+      type: "Abusive Content",
     },
     {
       key: "12",
       no: "12",
-      name: "Charlotte Jackson",
-      role: "Supervisor",
-      phone: "+1 9876543221",
-      email: "charlottejackson@example.com",
-      location: "Jacksonville, USA",
+      name: "Charlotte Clark",
+      reason: "Excessive self-promotion.",
+      reportedFrom: "Forum",
+      type: "Spam/Scam",
     },
     {
       key: "13",
       no: "13",
-      name: "William White",
-      role: "Host",
-      phone: "+1 9876543222",
-      email: "williamwhite@example.com",
-      location: "Fort Worth, USA",
+      name: "Benjamin Lewis",
+      reason: "Distributing pirated materials.",
+      reportedFrom: "Download section",
+      type: "Illegal Content",
     },
     {
       key: "14",
       no: "14",
-      name: "Amelia Harris",
-      role: "Driver",
-      phone: "+1 9876543223",
-      email: "ameliaharris@example.com",
-      location: "Columbus, USA",
+      name: "Amelia Walker",
+      reason: "Promoting unverified medical advice.",
+      reportedFrom: "Article page",
+      type: "Misinformation",
     },
     {
       key: "15",
       no: "15",
-      name: "Henry Martin",
-      role: "Manager",
-      phone: "+1 9876543224",
-      email: "henrymartin@example.com",
-      location: "Charlotte, USA",
+      name: "Lucas Hall",
+      reason: "Repeatedly creating fake events.",
+      reportedFrom: "Event page",
+      type: "Fake Information",
     },
     {
       key: "16",
       no: "16",
-      name: "Evelyn Thompson",
-      role: "Supervisor",
-      phone: "+1 9876543225",
-      email: "evelynthompson@example.com",
-      location: "San Francisco, USA",
+      name: "Mia Allen",
+      reason: "Sending phishing links.",
+      reportedFrom: "Direct messages",
+      type: "Spam/Scam",
     },
     {
       key: "17",
       no: "17",
-      name: "Alexander Garcia",
-      role: "Host",
-      phone: "+1 9876543226",
-      email: "alexandergarcia@example.com",
-      location: "Indianapolis, USA",
+      name: "Henry Young",
+      reason: "Promoting extremist content.",
+      reportedFrom: "News section",
+      type: "Harmful Content",
     },
     {
       key: "18",
       no: "18",
-      name: "Harper Martinez",
-      role: "Driver",
-      phone: "+1 9876543227",
-      email: "harpermartinez@example.com",
-      location: "Seattle, USA",
+      name: "Harper King",
+      reason: "Sharing disturbing violent images.",
+      reportedFrom: "Gallery",
+      type: "Violence",
     },
     {
       key: "19",
       no: "19",
-      name: "Daniel Robinson",
-      role: "Manager",
-      phone: "+1 9876543228",
-      email: "danielrobinson@example.com",
-      location: "Denver, USA",
+      name: "Alexander Scott",
+      reason: "Abusive language towards moderators.",
+      reportedFrom: "Support chat",
+      type: "Abusive Content",
     },
     {
       key: "20",
       no: "20",
-      name: "Ella Clark",
-      role: "Supervisor",
-      phone: "+1 9876543229",
-      email: "ellaclark@example.com",
-      location: "Washington, USA",
+      name: "Ella Green",
+      reason: "Repeatedly posting irrelevant comments.",
+      reportedFrom: "Comment section",
+      type: "Spam/Scam",
     },
     {
       key: "21",
       no: "21",
-      name: "Matthew Rodriguez",
-      role: "Host",
-      phone: "+1 9876543230",
-      email: "matthewrodriguez@example.com",
-      location: "Boston, USA",
+      name: "Daniel Baker",
+      reason: "Impersonating an official account.",
+      reportedFrom: "User profile",
+      type: "Identity Theft",
     },
     {
       key: "22",
       no: "22",
-      name: "Scarlett Lewis",
-      role: "Driver",
-      phone: "+1 9876543231",
-      email: "scarlettlewis@example.com",
-      location: "El Paso, USA",
+      name: "Scarlett Adams",
+      reason: "Promoting pyramid schemes.",
+      reportedFrom: "Forum",
+      type: "Scam",
     },
     {
       key: "23",
       no: "23",
-      name: "Jackson Lee",
-      role: "Manager",
-      phone: "+1 9876543232",
-      email: "jacksonlee@example.com",
-      location: "Nashville, USA",
+      name: "Matthew Campbell",
+      reason: "Posting misleading discount offers.",
+      reportedFrom: "Product page",
+      type: "Fake Information",
     },
     {
       key: "24",
       no: "24",
-      name: "Victoria Walker",
-      role: "Supervisor",
-      phone: "+1 9876543233",
-      email: "victoriawalker@example.com",
-      location: "Detroit, USA",
+      name: "Victoria Roberts",
+      reason: "Spamming cryptocurrency promotions.",
+      reportedFrom: "Dashboard",
+      type: "Spam/Scam",
     },
     {
       key: "25",
       no: "25",
-      name: "Sebastian Hall",
-      role: "Host",
-      phone: "+1 9876543234",
-      email: "sebastianhall@example.com",
-      location: "Oklahoma City, USA",
+      name: "Joseph Phillips",
+      reason: "Uploading inappropriate memes.",
+      reportedFrom: "Gallery",
+      type: "Adult Content",
     },
     {
       key: "26",
       no: "26",
-      name: "Aria Allen",
-      role: "Driver",
-      phone: "+1 9876543235",
-      email: "ariaallen@example.com",
-      location: "Las Vegas, USA",
+      name: "Grace Parker",
+      reason: "Promoting fake giveaways.",
+      reportedFrom: "Event page",
+      type: "Scam",
     },
     {
       key: "27",
       no: "27",
-      name: "David Young",
-      role: "Manager",
-      phone: "+1 9876543236",
-      email: "davideyoung@example.com",
-      location: "Portland, USA",
+      name: "Samuel Evans",
+      reason: "Repeated trolling behavior.",
+      reportedFrom: "Group chat",
+      type: "Harassment",
     },
     {
       key: "28",
       no: "28",
-      name: "Grace King",
-      role: "Supervisor",
-      phone: "+1 9876543237",
-      email: "graceking@example.com",
-      location: "Memphis, USA",
+      name: "Chloe Turner",
+      reason: "Sharing private information publicly.",
+      reportedFrom: "User profile",
+      type: "Privacy Violation",
     },
     {
       key: "29",
       no: "29",
-      name: "Joseph Scott",
-      role: "Host",
-      phone: "+1 9876543238",
-      email: "josephscott@example.com",
-      location: "Louisville, USA",
+      name: "David Carter",
+      reason: "Posting dangerous challenges.",
+      reportedFrom: "Video section",
+      type: "Harmful Content",
     },
     {
       key: "30",
       no: "30",
-      name: "Chloe Green",
-      role: "Driver",
-      phone: "+1 9876543239",
-      email: "chloegreen@example.com",
-      location: "Baltimore, USA",
+      name: "Lily Mitchell",
+      reason: "Spreading conspiracy theories.",
+      reportedFrom: "News section",
+      type: "Misinformation",
     },
   ];
+
   const columns = [
     {
       title: "Sr.No",
@@ -317,37 +290,32 @@ function Reports() {
           />
           <div className="flex flex-col gap-[2px]">
             <span className="leading-none">{record.name}</span>
-            {/* <span className="leading-none text-gray-500 text-sm">{record.email}</span> */}
+
           </div>
         </div>
       ),
     },
     {
       title: "Reason",
-      dataIndex: "role",
-      key: "role",
+      dataIndex: "reason",
+      key: "reason",
     },
     {
       title: "Reported Form",
-      dataIndex: "phone",
-      key: "phone",
+      dataIndex: "reportedFrom",
+      key: "reportedFrom",
     },
     {
       title: "Type",
-      dataIndex: "email",
-      key: "email",
+      dataIndex: "type",
+      key: "type",
     },
-    // {
-    //   title: "Action",
-    //   dataIndex: "location",
-    //   key: "location",
-    // },
     {
       title: "Action",
       key: "action",
       render: (_, record) => (
         <div className="flex gap-2">
-          <button className="" onClick={showModal}>
+          <button className="" onClick={() => navigate("/chat")}>
             <LuMessageSquareText className=" w-10 h-10 cursor-pointer rounded-md" />
           </button>
 
@@ -435,7 +403,7 @@ function Reports() {
           onCancel={handleViewCancel}
           footer={null}
           width={800}
-          className="user-view-modal"
+          className="report-view-modal"
         >
           {selectedUser && (
             <div className="relative">
@@ -448,80 +416,44 @@ function Reports() {
                       alt={selectedUser.name}
                       className="w-24 h-24 rounded-full border-4 border-white shadow-lg object-cover"
                     />
+                    <div className="absolute -top-2 -right-2 px-2 py-1 rounded-full text-xs font-bold text-white bg-red-500">
+                      REPORT
+                    </div>
                   </div>
                   <div className="text-white">
                     <h2 className="text-3xl font-bold mb-2">
-                      {selectedUser.name}
+                      Report #{selectedUser.no.padStart(4, '0')}
                     </h2>
                     <div className="flex items-center gap-3 mb-2">
                       <span className="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-medium">
-                        {selectedUser.role}
+                        Reported User: {selectedUser.name}
                       </span>
                     </div>
+                    <p className="text-white/90">Status: Under Review</p>
                   </div>
                 </div>
               </div>
 
               {/* Content sections */}
               <div className="space-y-6">
-                {/* Contact Information */}
+                {/* Report Information */}
                 <div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
                     <div className="w-2 h-2 bg-[#00c0b5] rounded-full"></div>
-                    Contact Information
+                    Report Information
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="bg-white border border-gray-200 p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                          <span className="text-blue-600 text-lg">📞</span>
+                        <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                          <span className="text-red-600 text-lg">⚠️</span>
                         </div>
                         <div>
                           <h4 className="text-sm font-medium text-gray-600">
-                            Phone Number
+                            Reason
                           </h4>
                           <p className="text-lg font-semibold text-gray-800">
-                            {selectedUser.phone}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="bg-white border border-gray-200 p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                          <span className="text-purple-600 text-lg">📧</span>
-                        </div>
-                        <div>
-                          <h4 className="text-sm font-medium text-gray-600">
-                            Email Address
-                          </h4>
-                          <p className="text-lg font-semibold text-gray-800">
-                            {selectedUser.email}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Location & Additional Info */}
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                    <div className="w-2 h-2 bg-[#00c0b5] rounded-full"></div>
-                    Location & Details
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="bg-white border border-gray-200 p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                          <span className="text-green-600 text-lg">📍</span>
-                        </div>
-                        <div>
-                          <h4 className="text-sm font-medium text-gray-600">
-                            Location
-                          </h4>
-                          <p className="text-lg font-semibold text-gray-800">
-                            {selectedUser.location}
+                            {selectedUser.reason}
                           </p>
                         </div>
                       </div>
@@ -529,14 +461,14 @@ function Reports() {
                     <div className="bg-white border border-gray-200 p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-                          <span className="text-orange-600 text-lg">⏰</span>
+                          <span className="text-orange-600 text-lg">📋</span>
                         </div>
                         <div>
                           <h4 className="text-sm font-medium text-gray-600">
-                            Member Since
+                            Report Type
                           </h4>
                           <p className="text-lg font-semibold text-gray-800">
-                            January 2024
+                            {selectedUser.type}
                           </p>
                         </div>
                       </div>
@@ -544,41 +476,70 @@ function Reports() {
                   </div>
                 </div>
 
-                {/* Activity Stats */}
+                {/* Reporter & Additional Info */}
                 <div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
                     <div className="w-2 h-2 bg-[#00c0b5] rounded-full"></div>
-                    Activity Overview
+                    Reporter Details
                   </h3>
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-xl text-center">
-                      <div className="text-2xl font-bold text-blue-600 mb-1">
-                        24
-                      </div>
-                      <div className="text-sm text-blue-700">
-                        Events Attended
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-white border border-gray-200 p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                          <span className="text-blue-600 text-lg">👤</span>
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-medium text-gray-600">
+                            Reported From
+                          </h4>
+                          <p className="text-lg font-semibold text-gray-800">
+                            {selectedUser.reportedFrom}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                    <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-xl text-center">
-                      <div className="text-2xl font-bold text-green-600 mb-1">
-                        12
+                    <div className="bg-white border border-gray-200 p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                          <span className="text-green-600 text-lg">📅</span>
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-medium text-gray-600">
+                            Report Date
+                          </h4>
+                          <p className="text-lg font-semibold text-gray-800">
+                            {new Date().toLocaleDateString()}
+                          </p>
+                        </div>
                       </div>
-                      <div className="text-sm text-green-700">
-                        Events Hosted
-                      </div>
-                    </div>
-                    <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-xl text-center">
-                      <div className="text-2xl font-bold text-purple-600 mb-1">
-                        4.8
-                      </div>
-                      <div className="text-sm text-purple-700">Rating</div>
                     </div>
                   </div>
                 </div>
+
+                {/* Report Description */}
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                    <div className="w-2 h-2 bg-[#00c0b5] rounded-full"></div>
+                    Report Description
+                  </h3>
+                  <div className="bg-white border border-gray-200 p-4 rounded-xl shadow-sm">
+                    <p className="text-gray-700 leading-relaxed">
+                      <strong>Report Details:</strong> {selectedUser.reason}
+                      <br /><br />
+                      <strong>Location:</strong> This incident was reported from the {selectedUser.reportedFrom}.
+                      <br /><br />
+                      <strong>Category:</strong> This report has been classified as "{selectedUser.type}".
+                      Further investigation is required to determine the appropriate action.
+                    </p>
+                  </div>
+                </div>
+
+              
               </div>
 
               {/* Action buttons */}
               <div className="flex justify-end items-center mt-8 pt-6 border-t border-gray-200">
+             
                 <button
                   onClick={handleViewCancel}
                   className="bg-gray-500 text-white font-semibold px-8 py-2 rounded-lg hover:bg-gray-600 transition-colors"
