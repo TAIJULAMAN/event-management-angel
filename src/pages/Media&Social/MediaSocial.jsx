@@ -4,11 +4,16 @@ import { IoSearch } from "react-icons/io5";
 import PageHeading from "../../components/PageHeading/PageHeading";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { FaRegEye } from "react-icons/fa";
+import { FiEdit } from "react-icons/fi";
 
 function MediaSocial() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [editTitle, setEditTitle] = useState("");
+  const [addTitle, setAddTitle] = useState("");
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -25,276 +30,62 @@ function MediaSocial() {
     setIsViewModalOpen(false);
     setSelectedUser(null);
   };
+
+  const showEditModal = (user) => {
+    setSelectedUser(user);
+    setEditTitle(user.title);
+    setIsEditModalOpen(true);
+  };
+  const handleEditCancel = () => {
+    setIsEditModalOpen(false);
+    setSelectedUser(null);
+    setEditTitle("");
+  };
+
+  const handleEditSubmit = () => {
+    console.log('Edit data:', { id: selectedUser.key, title: editTitle });
+    setIsEditModalOpen(false);
+    setSelectedUser(null);
+    setEditTitle("");
+  };
+
+  const showAddModal = () => {
+    setIsAddModalOpen(true);
+  };
+  const handleAddCancel = () => {
+    setIsAddModalOpen(false);
+    setAddTitle("");
+  };
+
+  const handleAddSubmit = () => {
+    console.log('Add data:', { title: addTitle });
+    setIsAddModalOpen(false);
+    setAddTitle("");
+  };
   const dataSource = [
     {
       key: "1",
       no: "1",
-      name: "John Doe",
-      role: "Host",
-      phone: "+1 9876543210",
-      email: "johndoe@example.com",
-      location: "New York, USA",
+      title: "Allow photo/video uploads",
+
     },
     {
       key: "2",
       no: "2",
-      name: "Emma Smith",
-      role: "Driver",
-      phone: "+1 9876543211",
-      email: "emmasmith@example.com",
-      location: "Los Angeles, USA",
+      title: "Enable event gallery",
+
     },
     {
       key: "3",
       no: "3",
-      name: "Liam Johnson",
-      role: "Manager",
-      phone: "+1 9876543212",
-      email: "liamjohnson@example.com",
-      location: "Chicago, USA",
+      title: "Enable social sharing",
+
     },
     {
       key: "4",
       no: "4",
-      name: "Olivia Brown",
-      role: "Supervisor",
-      phone: "+1 9876543213",
-      email: "oliviabrown@example.com",
-      location: "Houston, USA",
-    },
-    {
-      key: "5",
-      no: "5",
-      name: "Noah Davis",
-      role: "Host",
-      phone: "+1 9876543214",
-      email: "noahdavis@example.com",
-      location: "Phoenix, USA",
-    },
-    {
-      key: "6",
-      no: "6",
-      name: "Sophia Miller",
-      role: "Driver",
-      phone: "+1 9876543215",
-      email: "sophiamiller@example.com",
-      location: "Philadelphia, USA",
-    },
-    {
-      key: "7",
-      no: "7",
-      name: "James Wilson",
-      role: "Manager",
-      phone: "+1 9876543216",
-      email: "jameswilson@example.com",
-      location: "San Antonio, USA",
-    },
-    {
-      key: "8",
-      no: "8",
-      name: "Isabella Moore",
-      role: "Supervisor",
-      phone: "+1 9876543217",
-      email: "isabellamoore@example.com",
-      location: "San Diego, USA",
-    },
-    {
-      key: "9",
-      no: "9",
-      name: "Benjamin Taylor",
-      role: "Host",
-      phone: "+1 9876543218",
-      email: "benjamintaylor@example.com",
-      location: "Dallas, USA",
-    },
-    {
-      key: "10",
-      no: "10",
-      name: "Mia Anderson",
-      role: "Driver",
-      phone: "+1 9876543219",
-      email: "miaanderson@example.com",
-      location: "San Jose, USA",
-    },
-    {
-      key: "11",
-      no: "11",
-      name: "Elijah Thomas",
-      role: "Manager",
-      phone: "+1 9876543220",
-      email: "elijahthomas@example.com",
-      location: "Austin, USA",
-    },
-    {
-      key: "12",
-      no: "12",
-      name: "Charlotte Jackson",
-      role: "Supervisor",
-      phone: "+1 9876543221",
-      email: "charlottejackson@example.com",
-      location: "Jacksonville, USA",
-    },
-    {
-      key: "13",
-      no: "13",
-      name: "William White",
-      role: "Host",
-      phone: "+1 9876543222",
-      email: "williamwhite@example.com",
-      location: "Fort Worth, USA",
-    },
-    {
-      key: "14",
-      no: "14",
-      name: "Amelia Harris",
-      role: "Driver",
-      phone: "+1 9876543223",
-      email: "ameliaharris@example.com",
-      location: "Columbus, USA",
-    },
-    {
-      key: "15",
-      no: "15",
-      name: "Henry Martin",
-      role: "Manager",
-      phone: "+1 9876543224",
-      email: "henrymartin@example.com",
-      location: "Charlotte, USA",
-    },
-    {
-      key: "16",
-      no: "16",
-      name: "Evelyn Thompson",
-      role: "Supervisor",
-      phone: "+1 9876543225",
-      email: "evelynthompson@example.com",
-      location: "San Francisco, USA",
-    },
-    {
-      key: "17",
-      no: "17",
-      name: "Alexander Garcia",
-      role: "Host",
-      phone: "+1 9876543226",
-      email: "alexandergarcia@example.com",
-      location: "Indianapolis, USA",
-    },
-    {
-      key: "18",
-      no: "18",
-      name: "Harper Martinez",
-      role: "Driver",
-      phone: "+1 9876543227",
-      email: "harpermartinez@example.com",
-      location: "Seattle, USA",
-    },
-    {
-      key: "19",
-      no: "19",
-      name: "Daniel Robinson",
-      role: "Manager",
-      phone: "+1 9876543228",
-      email: "danielrobinson@example.com",
-      location: "Denver, USA",
-    },
-    {
-      key: "20",
-      no: "20",
-      name: "Ella Clark",
-      role: "Supervisor",
-      phone: "+1 9876543229",
-      email: "ellaclark@example.com",
-      location: "Washington, USA",
-    },
-    {
-      key: "21",
-      no: "21",
-      name: "Matthew Rodriguez",
-      role: "Host",
-      phone: "+1 9876543230",
-      email: "matthewrodriguez@example.com",
-      location: "Boston, USA",
-    },
-    {
-      key: "22",
-      no: "22",
-      name: "Scarlett Lewis",
-      role: "Driver",
-      phone: "+1 9876543231",
-      email: "scarlettlewis@example.com",
-      location: "El Paso, USA",
-    },
-    {
-      key: "23",
-      no: "23",
-      name: "Jackson Lee",
-      role: "Manager",
-      phone: "+1 9876543232",
-      email: "jacksonlee@example.com",
-      location: "Nashville, USA",
-    },
-    {
-      key: "24",
-      no: "24",
-      name: "Victoria Walker",
-      role: "Supervisor",
-      phone: "+1 9876543233",
-      email: "victoriawalker@example.com",
-      location: "Detroit, USA",
-    },
-    {
-      key: "25",
-      no: "25",
-      name: "Sebastian Hall",
-      role: "Host",
-      phone: "+1 9876543234",
-      email: "sebastianhall@example.com",
-      location: "Oklahoma City, USA",
-    },
-    {
-      key: "26",
-      no: "26",
-      name: "Aria Allen",
-      role: "Driver",
-      phone: "+1 9876543235",
-      email: "ariaallen@example.com",
-      location: "Las Vegas, USA",
-    },
-    {
-      key: "27",
-      no: "27",
-      name: "David Young",
-      role: "Manager",
-      phone: "+1 9876543236",
-      email: "davideyoung@example.com",
-      location: "Portland, USA",
-    },
-    {
-      key: "28",
-      no: "28",
-      name: "Grace King",
-      role: "Supervisor",
-      phone: "+1 9876543237",
-      email: "graceking@example.com",
-      location: "Memphis, USA",
-    },
-    {
-      key: "29",
-      no: "29",
-      name: "Joseph Scott",
-      role: "Host",
-      phone: "+1 9876543238",
-      email: "josephscott@example.com",
-      location: "Louisville, USA",
-    },
-    {
-      key: "30",
-      no: "30",
-      name: "Chloe Green",
-      role: "Driver",
-      phone: "+1 9876543239",
-      email: "chloegreen@example.com",
-      location: "Baltimore, USA",
+      title: "live streamin",
+
     }
   ];
   const columns = [
@@ -304,49 +95,17 @@ function MediaSocial() {
       key: "no",
     },
     {
-      title: "Name",
-      key: "name",
-      render: (_, record) => (
-        <div className="flex items-center gap-3">
-          <img
-            src={`https://avatar.iran.liara.run/public/${record.key}`}
-            className="w-10 h-10 object-cover rounded-full"
-            alt="User Avatar"
-          />
-          <div className="flex flex-col gap-[2px]">
-            <span className="leading-none">{record.name}</span>
-            {/* <span className="leading-none text-gray-500 text-sm">{record.email}</span> */}
-          </div>
-        </div>
-      ),
-    },
-    {
-      title: "Role",
-      dataIndex: "role",
-      key: "role",
-    },
-    {
-      title: "Phone Number",
-      dataIndex: "phone",
-      key: "phone",
-    },
-    {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-    },
-    {
-      title: "Location",
-      dataIndex: "location",
-      key: "location",
+      title: "Title",
+      dataIndex: "title",
+      key: "title",
     },
     {
       title: "Action",
       key: "action",
       render: (_, record) => (
         <div className="flex gap-2">
-          <button className="" onClick={() => showViewModal(record)}>
-            <FaRegEye className="text-[#00c0b5] w-10 h-10 cursor-pointer rounded-md" />
+          <button className="" onClick={() => showEditModal(record)}>
+            <FiEdit className="text-[#00c0b5] w-10 h-10 cursor-pointer rounded-md" />
           </button>
           <button className="" onClick={showModal}>
             <RiDeleteBin6Line className="text-red-400 w-10 h-10 cursor-pointer rounded-md" />
@@ -357,18 +116,26 @@ function MediaSocial() {
   ];
 
   return (
-    <div>
+    <>
       <div className="my-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
-        <PageHeading title="User Management" />
-        <div className="relative w-full sm:w-[300px] ">
-          <input
-            type="text"
-            placeholder="Search..."
-            className="border border-[#e5eaf2] py-3 pl-12 pr-[65px] outline-none w-full rounded-md"
-          />
-          <span className=" text-gray-500 absolute top-0 left-0 h-full px-5 flex items-center justify-center rounded-r-md cursor-pointer">
-            <IoSearch className="text-[1.3rem]" />
-          </span>
+        <PageHeading title="Media & Social" />
+        <div className="flex gap-3 w-full md:w-auto">
+          <div className="relative w-full sm:w-[300px]">
+            <input
+              type="text"
+              placeholder="Search..."
+              className="border border-[#e5eaf2] py-3 pl-12 pr-4 outline-none w-full rounded-md"
+            />
+            <span className="text-gray-500 absolute top-0 left-0 h-full px-3 flex items-center justify-center cursor-pointer">
+              <IoSearch className="text-[1.3rem]" />
+            </span>
+          </div>
+          <button
+            onClick={showAddModal}
+            className="bg-gradient-to-r from-[#00c0b5] to-[#00a89b] text-white border-none hover:from-[#00a89b] hover:to-[#009688] shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 px-6 py-3 rounded-md font-semibold whitespace-nowrap"
+          >
+            + Add New
+          </button>
         </div>
       </div>
       <ConfigProvider
@@ -412,7 +179,7 @@ function MediaSocial() {
               Are you sure!
             </h1>
             <p className="text-xl text-center mt-5">
-              Do you want to delete this user profile?
+              Do you want to delete this media & social ?
             </p>
             <div className="text-center py-5 w-full">
               <button
@@ -425,157 +192,88 @@ function MediaSocial() {
           </div>
         </Modal>
 
-        {/* View Modal */}
+        {/* Edit Modal */}
         <Modal
-          open={isViewModalOpen}
+          open={isEditModalOpen}
           centered
-          onCancel={handleViewCancel}
+          onCancel={handleEditCancel}
           footer={null}
-          width={800}
-          className="user-view-modal"
+          width={500}
+          title="Edit Media & Social Item"
         >
           {selectedUser && (
-            <div className="relative">
-              {/* Header with gradient background */}
-              <div className="bg-gradient-to-r from-[#00c0b5] to-[#00a89b] p-6 -m-6 mb-6 rounded-t-lg">
-                <div className="flex items-center gap-6">
-                  <div className="relative">
-                    <img
-                      src={`https://avatar.iran.liara.run/public/${selectedUser.key}`}
-                      alt={selectedUser.name}
-                      className="w-24 h-24 rounded-full border-4 border-white shadow-lg object-cover"
-                    />
-                  </div>
-                  <div className="text-white">
-                    <h2 className="text-3xl font-bold mb-2">{selectedUser.name}</h2>
-                    <div className="flex items-center gap-3 mb-2">
-                      <span className="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-medium">
-                        {selectedUser.role}
-                      </span>
-
-                    </div>
-
-                  </div>
-                </div>
+            <div className="py-4">
+              <div className="mb-6">
+                <label className="block mb-2 text-sm font-semibold text-gray-700">
+                  Title
+                </label>
+                <input
+                  type="text"
+                  value={editTitle}
+                  onChange={(e) => setEditTitle(e.target.value)}
+                  placeholder="Enter title"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-[#00c0b5] focus:ring-2 focus:ring-[#00c0b5]/20 transition-all"
+                />
               </div>
-
-              {/* Content sections */}
-              <div className="space-y-6">
-                {/* Contact Information */}
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                    <div className="w-2 h-2 bg-[#00c0b5] rounded-full"></div>
-                    Contact Information
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="bg-white border border-gray-200 p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                          <span className="text-blue-600 text-lg">📞</span>
-                        </div>
-                        <div>
-                          <h4 className="text-sm font-medium text-gray-600">Phone Number</h4>
-                          <p className="text-lg font-semibold text-gray-800">{selectedUser.phone}</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="bg-white border border-gray-200 p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                          <span className="text-purple-600 text-lg">📧</span>
-                        </div>
-                        <div>
-                          <h4 className="text-sm font-medium text-gray-600">Email Address</h4>
-                          <p className="text-lg font-semibold text-gray-800">{selectedUser.email}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Location & Additional Info */}
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                    <div className="w-2 h-2 bg-[#00c0b5] rounded-full"></div>
-                    Location & Details
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="bg-white border border-gray-200 p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                          <span className="text-green-600 text-lg">📍</span>
-                        </div>
-                        <div>
-                          <h4 className="text-sm font-medium text-gray-600">Location</h4>
-                          <p className="text-lg font-semibold text-gray-800">{selectedUser.location}</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="bg-white border border-gray-200 p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-                          <span className="text-orange-600 text-lg">⏰</span>
-                        </div>
-                        <div>
-                          <h4 className="text-sm font-medium text-gray-600">Member Since</h4>
-                          <p className="text-lg font-semibold text-gray-800">January 2024</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Activity Stats */}
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                    <div className="w-2 h-2 bg-[#00c0b5] rounded-full"></div>
-                    Activity Overview
-                  </h3>
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-xl text-center">
-                      <div className="text-2xl font-bold text-blue-600 mb-1">24</div>
-                      <div className="text-sm text-blue-700">Events Attended</div>
-                    </div>
-                    <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-xl text-center">
-                      <div className="text-2xl font-bold text-green-600 mb-1">12</div>
-                      <div className="text-sm text-green-700">Events Hosted</div>
-                    </div>
-                    <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-xl text-center">
-                      <div className="text-2xl font-bold text-purple-600 mb-1">4.8</div>
-                      <div className="text-sm text-purple-700">Rating</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Action buttons */}
-              <div className="flex justify-end items-center mt-8 pt-6 border-t border-gray-200">
-
+              <div className="flex justify-between items-center pt-4 border-t border-gray-200">
                 <button
-                  onClick={handleViewCancel}
-                  className="bg-gray-500 text-white font-semibold px-8 py-2 rounded-lg hover:bg-gray-600 transition-colors"
+                  onClick={handleEditCancel}
+                  className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
                 >
-                  Close
+                  Cancel
+                </button>
+                <button
+                  onClick={handleEditSubmit}
+                  className="px-6 py-2 bg-gradient-to-r from-[#00c0b5] to-[#00a89b] text-white rounded-lg hover:from-[#00a89b] hover:to-[#009688] transition-all transform hover:scale-105 shadow-lg"
+                >
+                  Save Changes
                 </button>
               </div>
             </div>
           )}
         </Modal>
+
+        {/* Add Modal */}
+        <Modal
+          open={isAddModalOpen}
+          centered
+          onCancel={handleAddCancel}
+          footer={null}
+          width={500}
+          title="Add New Media & Social Item"
+        >
+          <div className="py-4">
+            <div className="mb-6">
+              <label className="block mb-2 text-sm font-semibold text-gray-700">
+                Title
+              </label>
+              <input
+                type="text"
+                value={addTitle}
+                onChange={(e) => setAddTitle(e.target.value)}
+                placeholder="Enter title"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-[#00c0b5] focus:ring-2 focus:ring-[#00c0b5]/20 transition-all"
+              />
+            </div>
+            <div className="flex justify-between items-center pt-4 border-t border-gray-200">
+              <button
+                onClick={handleAddCancel}
+                className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleAddSubmit}
+                className="px-6 py-2 bg-gradient-to-r from-[#00c0b5] to-[#00a89b] text-white rounded-lg hover:from-[#00a89b] hover:to-[#009688] transition-all transform hover:scale-105 shadow-lg"
+              >
+                Add Item
+              </button>
+            </div>
+          </div>
+        </Modal>
       </ConfigProvider>
-    </div>
+    </>
   );
 }
 
 export default MediaSocial;
-
-
-
-
-
-
-// const [items, setItems] = useState([
-//   { id: 1, name: 'Allow photo/video uploads', icon: <CameraOutlined />, enabled: true },
-//   { id: 2, name: 'Enable event gallery', icon: <PictureOutlined />, enabled: true },
-//   { id: 3, name: 'Enable social sharing', icon: <ShareAltOutlined />, enabled: true },
-//   { id: 4, name: 'live streaming', icon: <VideoCameraOutlined />, enabled: true },
-// ]);
