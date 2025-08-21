@@ -178,7 +178,7 @@ function Interactivity() {
                             Are you sure!
                         </h1>
                         <p className="text-xl text-center mt-5">
-                            Do you want to delete this media & social ?
+                            Do you want to delete this Interactivity ?
                         </p>
                         <div className="text-center py-5 w-full">
                             <button
@@ -198,7 +198,7 @@ function Interactivity() {
                     onCancel={handleEditCancel}
                     footer={null}
                     width={500}
-                    title="Edit Media & Social Item"
+                    title="Edit Interactivity Item"
                 >
                     {selectedUser && (
                         <div className="py-4">
@@ -239,7 +239,7 @@ function Interactivity() {
                     onCancel={handleAddCancel}
                     footer={null}
                     width={500}
-                    title="Add New Media & Social Item"
+                    title="Add New Interactivity Item"
                 >
                     <div className="py-4">
                         <div className="mb-6">
