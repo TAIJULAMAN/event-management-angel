@@ -12,7 +12,7 @@ import {
 
 function DashboardPage() {
   const currentYear = dayjs().year();
-  const startYear = 1900;
+  const startYear = 2024;
   const [selectedYear, setSelectedYear] = useState(currentYear);
   const [isUserGrowthOpen, setIsUserGrowthOpen] = useState(false);
   const [isEventGrowthOpen, setIsEventGrowthOpen] = useState(false);

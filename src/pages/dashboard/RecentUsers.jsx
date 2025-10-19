@@ -1,97 +1,117 @@
-import { ConfigProvider, Modal, Table } from "antd";
-
+import { ConfigProvider, Table, Spin, Alert } from "antd";
+import { useGetAllUserQuery } from "../../redux/api/userApi";
+import { format } from 'date-fns';
+import { getImageUrl } from "../../config/envConfig";
 
 const RecentUsers = () => {
+  const { data, isLoading, isError, error } = useGetAllUserQuery({ page: 1, limit: 10 });
 
-
-
-
-  const dataSource = [
-    {
-      key: "1",
-      no: "1",
-      name: "John Doe",
-      date: "05/03/2025",
-      phone: "+1 9876543210",
-      email: "johndoe@example.com",
-      location: "New York, USA",
-    },
-    {
-      key: "2",
-      no: "2",
-      name: "Jane Smith",
-      date: "10/04/2025",
-      phone: "+44 1234567890",
-      email: "janesmith@example.com",
-      location: "London, UK",
-    },
-    {
-      key: "3",
-      no: "3",
-      name: "Ali Khan",
-      date: "15/02/2025",
-      phone: "+92 3345678901",
-      email: "alikhan@example.com",
-      location: "Karachi, Pakistan",
-    },
-    {
-      key: "4",
-      no: "4",
-      name: "Emily Davis",
-      date: "20/05/2025",
-      phone: "+33 6789012345",
-      email: "emilydavis@example.com",
-      location: "Paris, France",
-    },
-    {
-      key: "5",
-      no: "5",
-      name: "Michael Brown",
-      date: "25/06/2025",
-      phone: "+61 4567890123",
-      email: "michaelbrown@example.com",
-      location: "Sydney, Australia",
-    }
-  ];
-
-
+  // Format the user data for the table
+  const dataSource = data?.data?.all_users?.map((user, index) => ({
+    key: user._id,
+    no: index + 1,
+    name: user.name || 'N/A',
+    role: user.role || 'USER',
+    photo: user.photo || `https://avatar.iran.liara.run/public/${user._id}`,
+    date: user.createdAt ? format(new Date(user.createdAt), 'dd/MM/yyyy') : 'N/A',
+    phone: user.phoneNumber || 'N/A',
+        createdAt: user.createdAt,
+    email: user.email || 'N/A',
+    location: 'N/A', // Location data not available in the API response
+  })) || [];
 
   const columns = [
-    { title: "No", dataIndex: "no", key: "no" },
-    { title: "Name", dataIndex: "name", key: "name" },
-    { title: "Date", dataIndex: "date", key: "date" },
-    { title: "Phone Number", dataIndex: "phone", key: "phone" },
-    { title: "Email", dataIndex: "email", key: "email" },
-    { title: "Location", dataIndex: "location", key: "location" },
-
+    {
+      title: "No",
+      dataIndex: "no",
+      key: "no",
+      width: 70,
+    },
+    {
+      title: "Name",
+      key: "name",
+      render: (_, record) => (
+        <div className="flex items-center gap-3">
+          <img
+            src={`${getImageUrl(record?.photo)}`}
+            className="w-10 h-10 object-cover rounded-full"
+            alt="User Avatar"
+          />
+          <div className="flex flex-col gap-[2px]">
+            <span className="leading-none">{record.name}</span>
+            <span className="leading-none text-gray-500 text-sm">{record.email}</span>
+          </div>
+        </div>
+      ),
+    },
+    {
+      title: "Role",
+      dataIndex: "role",
+      key: "role",
+      width: 120,
+    },
+    {
+      title: "Phone Number",
+      dataIndex: "phone",
+      key: "phone",
+      width: 150,
+    },
+    {
+      title: "Join Date",
+      key: "joinDate",
+      render: (_, record) => (
+        <span>
+          {record.createdAt ? format(new Date(record.createdAt), 'MMM dd, yyyy') : 'N/A'}
+        </span>
+      ),
+      width: 150,
+    },
+ 
   ];
 
-  return (
-    <>
-      <ConfigProvider
-        theme={{
-          components: {
-            InputNumber: {
-              activeBorderColor: "#00c0b5",
-            },
+  if (isLoading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', padding: '24px' }}>
+        <Spin size="large" />
+      </div>
+    );
+  }
 
-            Table: {
-              headerBg: "#00c0b5",
-              headerColor: "rgb(255,255,255)",
-              cellFontSize: 16,
-              headerSplitColor: "#00c0b5",
-            },
+  if (isError) {
+    return (
+      <Alert
+        message="Error"
+        description={error?.data?.message || 'Failed to load users. Please try again later.'}
+        type="error"
+        showIcon
+      />
+    );
+  }
+
+  return (
+    <ConfigProvider
+      theme={{
+        components: {
+          InputNumber: {
+            activeBorderColor: "#00c0b5",
           },
-        }}
-      >
-        <Table
-          dataSource={dataSource}
-          columns={columns}
-          pagination={false}
-          scroll={{ x: "max-content" }}
-        />
-      </ConfigProvider>
-    </>
+          Table: {
+            headerBg: "#00c0b5",
+            headerColor: "rgb(255,255,255)",
+            cellFontSize: 16,
+            headerSplitColor: "#00c0b5",
+          },
+        },
+      }}
+    >
+      <Table
+        dataSource={dataSource}
+        columns={columns}
+        pagination={false}
+        scroll={{ x: "max-content" }}
+        loading={isLoading}
+      />
+    </ConfigProvider>
   );
 };
 
