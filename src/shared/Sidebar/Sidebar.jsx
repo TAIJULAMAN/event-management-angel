@@ -94,7 +94,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
               }`}
           >
             <TiMediaFastForwardOutline className="w-5 h-5" />
-            <p className="text-lg font-semibold">Media & Social</p>
+            <p className="text-lg font-semibold">All Event Groups</p>
           </li>
         </Link>
         {/* Interactivity */}

@@ -1,113 +1,111 @@
 import { ConfigProvider, Modal, Table } from "antd";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { IoSearch } from "react-icons/io5";
 import PageHeading from "../../components/PageHeading/PageHeading";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { FaRegEye } from "react-icons/fa";
-import { FiEdit } from "react-icons/fi";
+import { useGetAllEventGroupQuery } from "../../redux/api/allEventGroups";
+import { getImageUrl } from "../../config/envConfig";
 
 function MediaSocial() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+    total: 0,
+  });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [editTitle, setEditTitle] = useState("");
-  const [addTitle, setAddTitle] = useState("");
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
-  const showModal = () => {
+  const { data: eventsData, isLoading, isFetching } = useGetAllEventGroupQuery({
+    searchTerm,
+    page: pagination.current,
+    limit: pagination.pageSize,
+  });
+
+  useEffect(() => {
+    if (eventsData?.data?.meta) {
+      setPagination(prev => ({
+        ...prev,
+        total: eventsData.data.meta.total || 0,
+      }));
+    }
+  }, [eventsData]);
+
+  const handleTableChange = (pagination) => {
+    setPagination({
+      current: pagination.current,
+      pageSize: pagination.pageSize,
+    });
+  };
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+    setPagination(prev => ({ ...prev, current: 1 }));
+  };
+
+  const showModal = (event) => {
+    setSelectedEvent(event);
     setIsModalOpen(true);
   };
+
   const handleCancel = () => {
     setIsModalOpen(false);
+    setSelectedEvent(null);
   };
 
-  const showViewModal = (user) => {
-    setSelectedUser(user);
+  const showViewModal = (event) => {
+    setSelectedEvent(event);
     setIsViewModalOpen(true);
   };
+
   const handleViewCancel = () => {
     setIsViewModalOpen(false);
-    setSelectedUser(null);
+    setSelectedEvent(null);
   };
 
-  const showEditModal = (user) => {
-    setSelectedUser(user);
-    setEditTitle(user.title);
-    setIsEditModalOpen(true);
-  };
-  const handleEditCancel = () => {
-    setIsEditModalOpen(false);
-    setSelectedUser(null);
-    setEditTitle("");
-  };
-
-  const handleEditSubmit = () => {
-    console.log('Edit data:', { id: selectedUser.key, title: editTitle });
-    setIsEditModalOpen(false);
-    setSelectedUser(null);
-    setEditTitle("");
-  };
-
-  const showAddModal = () => {
-    setIsAddModalOpen(true);
-  };
-  const handleAddCancel = () => {
-    setIsAddModalOpen(false);
-    setAddTitle("");
-  };
-
-  const handleAddSubmit = () => {
-    console.log('Add data:', { title: addTitle });
-    setIsAddModalOpen(false);
-    setAddTitle("");
-  };
-  const dataSource = [
-    {
-      key: "1",
-      no: "1",
-      title: "Allow photo/video uploads",
-
-    },
-    {
-      key: "2",
-      no: "2",
-      title: "Enable event gallery",
-
-    },
-    {
-      key: "3",
-      no: "3",
-      title: "Enable social sharing",
-
-    },
-    {
-      key: "4",
-      no: "4",
-      title: "live streamin",
-
-    }
-  ];
   const columns = [
     {
       title: "No",
-      dataIndex: "no",
       key: "no",
+      render: (_, __, index) => (pagination.current - 1) * pagination.pageSize + index + 1,
     },
     {
-      title: "Title",
-      dataIndex: "title",
-      key: "title",
+      title: "Event Image",
+      key: "image",
+      render: (_, record) => (
+        <img
+          src={getImageUrl(record.eventId?.photo)}
+          className="w-20 h-10 object-cover"
+          alt="Event"
+        />
+      ),
+    },
+    {
+      title: "Event Title",
+      dataIndex: ["eventId", "event_title"],
+      key: "event_title",
+    },
+    {
+      title: "Group Name",
+      dataIndex: "groupName",
+      key: "groupName",
+    },
+    {
+      title: "Total Members",
+      dataIndex: "totalMember",
+      key: "totalMember",
     },
     {
       title: "Action",
       key: "action",
       render: (_, record) => (
         <div className="flex gap-2">
-          <button className="" onClick={() => showEditModal(record)}>
-            <FiEdit className="text-[#00c0b5] w-10 h-10 cursor-pointer rounded-md" />
+          <button onClick={() => showViewModal(record)}>
+            <FaRegEye className="text-[#00c0b5] w-10 h-10 cursor-pointer rounded-md" />
           </button>
-          <button className="" onClick={showModal}>
+          <button onClick={() => showModal(record)}>
             <RiDeleteBin6Line className="text-red-400 w-10 h-10 cursor-pointer rounded-md" />
           </button>
         </div>
@@ -116,42 +114,28 @@ function MediaSocial() {
   ];
 
   return (
-    <>
-      <div className="my-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
-        <PageHeading title="Media & Social" />
-        <div className="flex gap-3 w-full md:w-auto">
+    <div>
+      <div className="my-5 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+        <PageHeading title="All Event Groups" />
+        <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
           <div className="relative w-full sm:w-[300px]">
             <input
               type="text"
-              placeholder="Search..."
+              placeholder="Search events..."
               className="border border-[#e5eaf2] py-3 pl-12 pr-4 outline-none w-full rounded-md"
+              value={searchTerm}
+              onChange={handleSearch}
             />
             <span className="text-gray-500 absolute top-0 left-0 h-full px-3 flex items-center justify-center cursor-pointer">
               <IoSearch className="text-[1.3rem]" />
             </span>
           </div>
-          <button
-            onClick={showAddModal}
-            className="bg-gradient-to-r from-[#00c0b5] to-[#00a89b] text-white border-none hover:from-[#00a89b] hover:to-[#009688] shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 px-6 py-3 rounded-md font-semibold whitespace-nowrap"
-          >
-            + Add New
-          </button>
         </div>
       </div>
+
       <ConfigProvider
         theme={{
           components: {
-            InputNumber: {
-              activeBorderColor: "#00c0b5",
-            },
-            Pagination: {
-              colorPrimaryBorder: "#00c0b5",
-              colorBorder: "#00c0b5",
-              colorPrimaryHover: "#00c0b5",
-              colorTextPlaceholder: "#00c0b5",
-              itemActiveBgDisabled: "#00c0b5",
-              colorPrimary: "#00c0b5",
-            },
             Table: {
               headerBg: "#00c0b5",
               headerColor: "rgb(255,255,255)",
@@ -162,117 +146,102 @@ function MediaSocial() {
         }}
       >
         <Table
-          dataSource={dataSource}
           columns={columns}
-          pagination={{ pageSize: 10 }}
+          dataSource={eventsData?.data?.all_my_join_event || []}
+          rowKey="_id"
+          loading={isLoading || isFetching}
+          pagination={{
+            current: pagination.current,
+            pageSize: pagination.pageSize,
+            total: pagination.total,
+            showSizeChanger: false,
+            pageSizeOptions: ['10', '20', '50', '100'],
+           
+          }}
+          onChange={handleTableChange}
           scroll={{ x: "max-content" }}
         />
-        {/* Delete Modal */}
-        <Modal
-          open={isModalOpen}
-          centered
-          onCancel={handleCancel}
-          footer={null}
-        >
-          <div className="flex flex-col justify-center items-center py-10">
-            <h1 className="text-3xl text-center text-[#00c0b5]">
-              Are you sure!
-            </h1>
-            <p className="text-xl text-center mt-5">
-              Do you want to delete this media & social ?
-            </p>
-            <div className="text-center py-5 w-full">
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="bg-[#00c0b5] text-white font-semibold w-1/3 py-3 px-5 rounded-lg"
-              >
-                CONFIRM
-              </button>
-            </div>
-          </div>
-        </Modal>
-
-        {/* Edit Modal */}
-        <Modal
-          open={isEditModalOpen}
-          centered
-          onCancel={handleEditCancel}
-          footer={null}
-          width={500}
-          title="Edit Media & Social Item"
-        >
-          {selectedUser && (
-            <div className="py-4">
-              <div className="mb-6">
-                <label className="block mb-2 text-sm font-semibold text-gray-700">
-                  Title
-                </label>
-                <input
-                  type="text"
-                  value={editTitle}
-                  onChange={(e) => setEditTitle(e.target.value)}
-                  placeholder="Enter title"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-[#00c0b5] focus:ring-2 focus:ring-[#00c0b5]/20 transition-all"
-                />
-              </div>
-              <div className="flex justify-between items-center pt-4 border-t border-gray-200">
-                <button
-                  onClick={handleEditCancel}
-                  className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleEditSubmit}
-                  className="px-6 py-2 bg-gradient-to-r from-[#00c0b5] to-[#00a89b] text-white rounded-lg hover:from-[#00a89b] hover:to-[#009688] transition-all transform hover:scale-105 shadow-lg"
-                >
-                  Save Changes
-                </button>
-              </div>
-            </div>
-          )}
-        </Modal>
-
-        {/* Add Modal */}
-        <Modal
-          open={isAddModalOpen}
-          centered
-          onCancel={handleAddCancel}
-          footer={null}
-          width={500}
-          title="Add New Media & Social Item"
-        >
-          <div className="py-4">
-            <div className="mb-6">
-              <label className="block mb-2 text-sm font-semibold text-gray-700">
-                Title
-              </label>
-              <input
-                type="text"
-                value={addTitle}
-                onChange={(e) => setAddTitle(e.target.value)}
-                placeholder="Enter title"
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-[#00c0b5] focus:ring-2 focus:ring-[#00c0b5]/20 transition-all"
-              />
-            </div>
-            <div className="flex justify-between items-center pt-4 border-t border-gray-200">
-              <button
-                onClick={handleAddCancel}
-                className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleAddSubmit}
-                className="px-6 py-2 bg-gradient-to-r from-[#00c0b5] to-[#00a89b] text-white rounded-lg hover:from-[#00a89b] hover:to-[#009688] transition-all transform hover:scale-105 shadow-lg"
-              >
-                Add Item
-              </button>
-            </div>
-          </div>
-        </Modal>
       </ConfigProvider>
-    </>
+
+      {/* Delete Modal */}
+      <Modal
+        open={isModalOpen}
+        centered
+        onCancel={handleCancel}
+        footer={null}
+      >
+        <div className="flex flex-col justify-center items-center py-10">
+          <h1 className="text-3xl text-center text-[#00c0b5]">Are you sure!</h1>
+          <p className="text-xl text-center mt-5">
+            Do you want to delete this event group?
+          </p>
+          <div className="text-center py-5 w-full flex justify-end gap-5">
+            <button
+              onClick={handleCancel}
+              className="bg-red-500 text-white font-semibold w-1/2 py-3 px-5 rounded-lg"
+            >
+              CONFIRM
+            </button>
+            <button
+              onClick={handleCancel}
+              className="bg-[#00c0b5] text-white font-semibold w-1/2 py-3 px-5 rounded-lg"
+            >
+              CANCEL
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* View Event Group Modal */}
+      <Modal
+        open={isViewModalOpen}
+        title="Event Group Details"
+        centered
+        onCancel={handleViewCancel}
+        footer={null}
+        width={700}
+      >
+        {selectedEvent && (
+          <div className="space-y-4">
+            <div className="flex items-start gap-4">
+              <img
+                src={getImageUrl(selectedEvent.eventId?.photo)}
+                alt="Event"
+                className="w-40 h-32 object-cover rounded"
+              />
+              <div>
+                <h3 className="text-xl font-semibold">{selectedEvent.eventId?.event_title}</h3>
+                <p className="text-gray-600">Group: {selectedEvent.groupName}</p>
+                <p className="text-gray-600">Date: {selectedEvent.eventId?.date}</p>
+                <p className="text-gray-600">
+                  Time: {selectedEvent.eventId?.starting_time} - {selectedEvent.eventId?.ending_time}
+                </p>
+                <p className="text-gray-600">
+                  Host: {selectedEvent.eventId?.hostId?.name || 'N/A'}
+                </p>
+              </div>
+            </div>
+            <div className="mt-4">
+              <h4 className="font-semibold">Event Details</h4>
+              <div className="grid grid-cols-2 gap-4 mt-2">
+                <div>
+                  <p className="text-gray-600">Category:</p>
+                  <p>{selectedEvent.eventId?.event_category}</p>
+                </div>
+                <div>
+                  <p className="text-gray-600">Max Capacity:</p>
+                  <p>{selectedEvent.eventId?.audience_settings?.max_capacity || 'N/A'}</p>
+                </div>
+                <div>
+                  <p className="text-gray-600">Total Members:</p>
+                  <p>{selectedEvent.totalMember}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </Modal>
+    </div>
   );
 }
 
