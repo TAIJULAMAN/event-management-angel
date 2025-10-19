@@ -1,24 +1,38 @@
 /* eslint-disable react/prop-types */
-import { Link, useLocation } from "react-router-dom";
-import { FaRegBookmark, FaRegUser } from "react-icons/fa";
-import { IoMdInformationCircleOutline, IoMdSettings } from "react-icons/io";
-import {
-  IoBagAddOutline,
-  IoChatboxEllipsesOutline,
-  IoCloseSharp,
-  IoLogInOutline,
-} from "react-icons/io5";
+import React, { useState } from 'react';
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { FaRegBookmark } from "react-icons/fa";
+import { IoBagAddOutline, IoCloseSharp, IoLogOutOutline } from "react-icons/io5";
 import { RxDashboard } from "react-icons/rx";
 import { MdOutlineEventNote, MdOutlinePrivacyTip } from "react-icons/md";
 import { TbBrandWechat, TbReport } from "react-icons/tb";
 import { LuUsers } from "react-icons/lu";
-import { GrGroup } from "react-icons/gr";
 import { TiMediaFastForwardOutline } from "react-icons/ti";
+import { Modal, } from 'antd';
+import { useDispatch } from 'react-redux';
+import { logout } from '../../redux/Slice/authSlice';
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const currentPath = location.pathname;
   const isActive = (path) => currentPath === path;
+
+  const showLogoutModal = () => {
+    setIsLogoutModalOpen(true);
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    setIsLogoutModalOpen(false);
+    navigate('/sign-in');
+  };
+
+  const handleCancel = () => {
+    setIsLogoutModalOpen(false);
+  };
 
   return (
     <div
@@ -148,15 +162,31 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
       {/* Logout Button */}
       <div className="absolute mt-8 md:mt-20 mmd:mt-20 w-full px-5">
-        <Link to="/sign-in">
-          <button
-            className="flex items-center gap-4 w-full py-3 rounded-lg bg-[#89D0C9]  px-3 duration-200 text-white justify-center "
-          >
-            <TbReport className="w-5 h-5 font-bold" />
-            <span>Logout</span>
-          </button>
-        </Link>
+        <button
+          onClick={showLogoutModal}
+          className="flex items-center gap-3 w-full py-3 rounded-lg bg-[#89D0C9] hover:bg-[#7ac4bd] px-3 duration-200 text-white justify-center"
+        >
+          <IoLogOutOutline className="w-5 h-5 font-bold" />
+          <span className="text-base font-medium">Logout</span>
+        </button>
       </div>
+
+      {/* Logout Confirmation Modal */}
+      <Modal
+        title="Confirm Logout"
+        open={isLogoutModalOpen}
+        onOk={handleLogout}
+        onCancel={handleCancel}
+        okText="Logout"
+        cancelText="Cancel"
+        okButtonProps={{
+          className: 'bg-[#89D0C9] hover:bg-[#7ac4bd] border-none',
+        }}
+      >
+        <div className="py-4">
+          <p className="text-gray-700">Are you sure you want to logout?</p>
+        </div>
+      </Modal>
     </div>
   );
 };

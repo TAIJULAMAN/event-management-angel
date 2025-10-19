@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   Area,
   AreaChart,
@@ -7,9 +7,45 @@ import {
   Tooltip,
   XAxis,
   YAxis,
+  CartesianGrid,
 } from "recharts";
 
-const TotalUser = () => {
+const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+const prepareChartData = (data) => {
+  if (!data || !Array.isArray(data)) return [];
+  
+  // Create a map with all months initialized to 0
+  const monthlyData = Array.from({ length: 12 }, (_, i) => ({
+    month: monthNames[i],
+    count: 0,
+  }));
+
+  // Update the counts from the API data
+  data.forEach((item) => {
+    const monthIndex = item.month - 1; // Convert to 0-based index
+    if (monthIndex >= 0 && monthIndex < 12) {
+      monthlyData[monthIndex].count = item.count;
+    }
+  });
+
+  return monthlyData;
+};
+
+const CustomTooltip = ({ active, payload }) => {
+  if (active && payload && payload.length) {
+    const { month, count } = payload[0].payload;
+    return (
+      <div className="bg-white shadow-md p-3 rounded-md border text-gray-700 text-sm">
+        <p className="font-medium">{month}</p>
+        <p className="font-medium">New Events: {count}</p>
+      </div>
+    );
+  }
+  return null;
+};
+
+const TotalUser = ({ data = [] }) => {
   const [chartHeight, setChartHeight] = useState(220);
 
   useEffect(() => {
@@ -29,63 +65,42 @@ const TotalUser = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const revenueData = [
-    { month: "Jan", netRevenue: 1200 },
-    { month: "Feb", netRevenue: 1500 },
-    { month: "Mar", netRevenue: 800 },
-    { month: "Apr", netRevenue: 1600 },
-    { month: "May", netRevenue: 2000 },
-    { month: "Jun", netRevenue: 1700 },
-    { month: "Jul", netRevenue: 2200 },
-    { month: "Aug", netRevenue: 1900 },
-    { month: "Sept", netRevenue: 2100 },
-    { month: "Oct", netRevenue: 1300 },
-    { month: "Nov", netRevenue: 1500 },
-    { month: "Dec", netRevenue: 800 },
-  ];
-
-  const CustomTooltip = ({ active, payload }) => {
-    if (active && payload && payload.length) {
-      const { month, netRevenue } = payload[0].payload;
-      return (
-        <div className="custom-tooltip bg-white py-3 px-2 rounded">
-          <p className="label">{`Month: ${month}`}</p>
-          <p className="label">{`Revenue: $${netRevenue}`}</p>
-        </div>
-      );
-    }
-    return null;
-  };
+  const chartData = useMemo(() => prepareChartData(data), [data]);
+  const maxCount = useMemo(() => Math.max(...chartData.map(item => item.count), 10), [chartData]);
 
   return (
     <div className="chart-container">
       <ResponsiveContainer width="100%" height={chartHeight}>
         <AreaChart
-          data={revenueData}
-          margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
+          data={chartData}
+          margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
         >
           <defs>
             <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#00c0b5" stopOpacity={1} />
-              <stop offset="95%" stopColor="#00c0b5" stopOpacity={0} />
+              <stop offset="5%" stopColor="#00c0b5" stopOpacity={0.8} />
+              <stop offset="95%" stopColor="#00c0b5" stopOpacity={0.1} />
             </linearGradient>
           </defs>
-          <XAxis
-            tickLine={false}
+          <CartesianGrid strokeDasharray="3 3" vertical={false} />
+          <XAxis 
             dataKey="month"
-             className="text-gray-600"
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: '#6B7280' }}
           />
-
-          {/* <YAxis tickLine={true} /> */}
-            <YAxis
-                      tickLine={false}
-                      className="text-gray-600"
-                    />
-          <Tooltip content={<CustomTooltip />} />
+          <YAxis 
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: '#6B7280' }}
+            domain={[0, maxCount + (maxCount * 0.1)]}
+            tickFormatter={(value) => (value === 0 ? '0' : value)}
+          />
+          <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(0, 0, 0, 0.05)' }} />
           <Area
             type="monotone"
-            dataKey="netRevenue"
+            dataKey="count"
             stroke="#00c0b5"
+            strokeWidth={2}
             fillOpacity={1}
             fill="url(#colorPv)"
           />

@@ -11,9 +11,9 @@ import UserDetails from "../pages/userDetails/UserDetails";
 import ProfilePage from "../pages/profile/ProfilePage";
 import Chat from "../pages/Chat/Chat";
 import MediaSocial from "../pages/Media&Social/MediaSocial";
-import ChatManagement from "../pages/ChatManagement/ChatManagement";
+// import ChatManagement from "../pages/ChatManagement/ChatManagement";
 import EventManagement from "../pages/eventManagement/eventManagement";
-import GroupManagement from "../pages/groupManagement/groupManagement";
+// import GroupManagement from "../pages/groupManagement/groupManagement";
 import Reports from "../pages/Reports/Reports";
 import Interactivity from "../pages/Interactivity/Interactivity";
 

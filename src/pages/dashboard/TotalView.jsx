@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import {
   Bar,
   BarChart,
@@ -7,40 +7,49 @@ import {
   Tooltip,
   XAxis,
   YAxis,
+  CartesianGrid,
 } from "recharts";
 
-const demoData = [
-  { month: "Jan", videoView: 50 },
-  { month: "Feb", videoView: 70 },
-  { month: "Mar", videoView: 60 },
-  { month: "Apr", videoView: 80 },
-  { month: "May", videoView: 90 },
-  { month: "Jun", videoView: 75 },
-  { month: "Jul", videoView: 85 },
-  { month: "Aug", videoView: 95 },
-  { month: "Sep", videoView: 70 },
-  { month: "Oct", videoView: 80 },
-  { month: "Nov", videoView: 100 },
-  { month: "Dec", videoView: 110 },
-];
+const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-const maxTrainerCount = Math.max(...demoData.map((item) => item.trainer), 100);
+const prepareChartData = (data) => {
+  if (!data || !Array.isArray(data)) return [];
+  
+  // Create a map with all months initialized to 0
+  const monthlyData = Array.from({ length: 12 }, (_, i) => ({
+    month: monthNames[i],
+    count: 0,
+  }));
+
+  // Update the counts from the API data
+  data.forEach((item) => {
+    const monthIndex = item.month - 1; // Convert to 0-based index
+    if (monthIndex >= 0 && monthIndex < 12) {
+      monthlyData[monthIndex].count = item.count;
+    }
+  });
+
+  return monthlyData;
+};
 
 const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
-    const { month, videoView } = payload[0].payload;
+    const { month, count } = payload[0].payload;
     return (
-      <div className="bg-white shadow-md p-3 rounded-md border text-gray-700">
-        <p className="font-medium">Month: {month}</p>
-        <p className="font-medium">Trainers: {videoView}</p>
+      <div className="bg-white shadow-md p-3 rounded-md border text-gray-700 text-sm">
+        <p className="font-medium">{month}</p>
+        <p className="font-medium">New Users: {count}</p>
       </div>
     );
   }
   return null;
 };
 
-const TotalView = () => {
+const TotalView = ({ data = [] }) => {
   const [chartHeight, setChartHeight] = useState(220);
+  
+  const chartData = useMemo(() => prepareChartData(data), [data]);
+  const maxCount = useMemo(() => Math.max(...chartData.map(item => item.count), 10), [chartData]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -62,26 +71,34 @@ const TotalView = () => {
     <div>
       <ResponsiveContainer width="100%" height={chartHeight}>
         <BarChart
-          data={demoData}
+          data={chartData}
           margin={{
-            top: 0,
-            right: 0,
-            left: 0,
+            top: 10,
+            right: 10,
+            left: -20,
             bottom: 0,
           }}
         >
-          <XAxis tickLine={false} dataKey="month" className="text-gray-600" />
-          <YAxis
+          <CartesianGrid strokeDasharray="3 3" vertical={false} />
+          <XAxis 
+            dataKey="month" 
+            axisLine={false}
             tickLine={false}
-            domain={[0, maxTrainerCount + 10]}
-            className="text-gray-600"
+            tick={{ fill: '#6B7280' }}
           />
-          <Tooltip content={<CustomTooltip />} />
+          <YAxis 
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: '#6B7280' }}
+            domain={[0, maxCount + (maxCount * 0.1)]}
+            tickFormatter={(value) => (value === 0 ? '0' : value)}
+          />
+          <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(0, 0, 0, 0.05)' }} />
           <Bar
-            barSize={30}
-            radius={[5, 5, 0, 0]}
-            dataKey="videoView"
+            dataKey="count"
             fill="#00c0b5"
+            radius={[4, 4, 0, 0]}
+            barSize={16}
           />
         </BarChart>
       </ResponsiveContainer>

@@ -1,9 +1,14 @@
 /* eslint-disable react/prop-types */
-
 import { useNavigate } from "react-router-dom";
+import { useGetProfileQuery } from "../../redux/api/profileApi";
+import { getImageUrl } from "../../config/envConfig";
 
 const MainHeader = ({ toggleSidebar }) => {
   const navigate = useNavigate();
+  const { data: profileData, isLoading } = useGetProfileQuery();
+  
+  // Default avatar URL
+  const defaultAvatar = "https://avatar.iran.liara.run/public/31";
 
   return (
     <div className="relative w-full">
@@ -23,13 +28,22 @@ const MainHeader = ({ toggleSidebar }) => {
               className="flex items-center gap-2 cursor-default"
             >
               <img
-                src="https://avatar.iran.liara.run/public/31"
+                src={getImageUrl(profileData?.data?.photo) || defaultAvatar}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = defaultAvatar;
+                }}
                 className="w-8 md:w-12 h-8 md:h-12 object-cover rounded-full"
-                alt="User Avatar"
+                alt={profileData?.data?.name || 'User'}
               />
-              <h3 className="hidden md:block text-[#0D0D0D] text-lg font-semibold">
-                Mr. Admin
-              </h3>
+              <div className="hidden md:block">
+                <h3 className="text-[#0D0D0D] text-lg font-semibold">
+                  {isLoading ? 'Loading...' : profileData?.data?.name || 'User'}
+                </h3>
+                {profileData?.data?.role && (
+                  <p className="text-sm text-gray-500">{profileData.data.role}</p>
+                )}
+              </div>
             </div>
             <button
               onClick={toggleSidebar}

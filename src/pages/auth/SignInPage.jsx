@@ -1,17 +1,91 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { notification } from "antd";
+import { setUser, setCredentials, setRememberMe, selectRememberMe, selectCredentials } from "../../redux/Slice/authSlice";
+import { useLogInMutation } from "../../redux/api/authApi";
+
+// Notification configuration
+const openNotification = (type, message, description = '') => {
+  notification[type]({
+    message,
+    description,
+    placement: 'topRight',
+    duration: 3,
+  });
+};
 
 function SignInPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+  
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const rememberMe = useSelector(selectRememberMe);
+  const savedCredentials = useSelector(selectCredentials);
+  const [login, { isLoading }] = useLogInMutation();
+
+  // Load saved credentials if remember me was checked
+  useEffect(() => {
+    if (savedCredentials?.email && savedCredentials?.password) {
+      setFormData({
+        email: savedCredentials.email,
+        password: savedCredentials.password,
+      });
+      dispatch(setRememberMe(true));
+    }
+  }, [dispatch, savedCredentials]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
   const handleCheckboxChange = (event) => {
-    if (event.target.checked) {
-      setIsChecked(true);
-    } else {
-      setIsChecked(false);
+    dispatch(setRememberMe(event.target.checked));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    try {
+      // Save credentials to Redux if remember me is checked
+      if (rememberMe) {
+        dispatch(setCredentials({
+          email: formData.email,
+          password: formData.password
+        }));
+      }
+      
+      // Call the login API
+      const response = await login({
+        email: formData.email,
+        password: formData.password
+      }).unwrap();
+
+      // Handle successful login
+      if (response?.success && response?.data?.accessToken) {
+        // The API returns the token in response.data.accessToken
+        dispatch(setUser({
+          user: { email: formData.email }, // You might want to fetch the user profile after login
+          token: response.data.accessToken,
+          rememberMe
+        }));
+        
+        // Show success notification and navigate to home page
+        openNotification('success', 'Login Successful', 'Welcome back!');
+        navigate("/");
+      }
+    } catch (error) {
+      console.error("Login failed:", error);
+      openNotification('error', 'Login Failed', error?.data?.message || "Invalid email or password. Please try again.");
     }
   };
 
@@ -26,7 +100,7 @@ function SignInPage() {
             <p className="text-[#6A6D76] text-center mb-10">
               Please enter your email and password to continue.
             </p>
-            <form className="space-y-5">
+            <form className="space-y-5" onSubmit={handleSubmit}>
               <div className="w-full">
                 <label className="text-xl text-[#0D0D0D] mb-2 font-bold">
                   Email
@@ -34,7 +108,9 @@ function SignInPage() {
                 <input
                   type="email"
                   name="email"
-                  placeholder="enter your gmail"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  placeholder="enter your email"
                   className="w-full px-5 py-3 border-2 border-[#6A6D76] rounded-md outline-none mt-5 placeholder:text-xl"
                   required
                 />
@@ -47,6 +123,8 @@ function SignInPage() {
                   <input
                     type={showPassword ? "text" : "password"}
                     name="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
                     placeholder="**********"
                     className="w-full border-2 border-[#6A6D76] rounded-md outline-none px-5 py-3 mt-5 placeholder:text-xl"
                     required
@@ -70,9 +148,10 @@ function SignInPage() {
                   <input
                     type="checkbox"
                     className="hidden"
+                    checked={rememberMe}
                     onChange={handleCheckboxChange}
                   />
-                  {isChecked ? (
+                  {rememberMe ? (
                     <svg
                       width="21"
                       height="21"
@@ -131,11 +210,19 @@ function SignInPage() {
               </div>
               <div className="flex justify-center items-center">
                 <button
-                  onClick={() => navigate("/")}
-                  type="button"
-                  className="w-1/3 bg-[#00c0b5] text-white font-bold py-3 rounded-lg shadow-lg cursor-pointer mt-5"
+                  type="submit"
+                  disabled={isLoading}
+                  className={`w-1/3 bg-[#00c0b5] text-white font-bold py-3 rounded-lg shadow-lg mt-5 hover:bg-[#00a89e] transition-colors flex items-center justify-center ${isLoading ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer'}`}
                 >
-                  Log In
+                  {isLoading ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Logging in...
+                    </>
+                  ) : 'Log In'}
                 </button>
               </div>
             </form>

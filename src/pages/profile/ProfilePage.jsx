@@ -1,10 +1,45 @@
 import { useState } from "react";
 import { FaCamera } from "react-icons/fa";
+import { useGetProfileQuery, useUpdateProfileMutation } from "../../redux/api/profileApi";
+import { notification } from 'antd';
 import EditProfile from "./EditProfile";
 import ChangePass from "./ChangePass";
+import { getImageUrl } from "../../config/envConfig";
 
 function ProfilePage() {
   const [activeTab, setActiveTab] = useState("editProfile");
+  const { data: profileData, refetch } = useGetProfileQuery();
+  const [updateProfile] = useUpdateProfileMutation();
+  
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      const response = await updateProfile(formData).unwrap();
+      
+      if (response?.success) {
+        notification.success({
+          message: 'Success',
+          description: 'Profile image updated successfully',
+          placement: 'topRight',
+        });
+        refetch(); // Refresh profile data
+      }
+    } catch (error) {
+      notification.error({
+        message: 'Error',
+        description: error?.data?.message || 'Failed to update profile image',
+        placement: 'topRight',
+      });
+    }
+  };
+  
+  // Set a default profile image if none exists
+  const profileImage = getImageUrl(profileData?.data?.photo) || 'https://avatar.iran.liara.run/public/44';
 
   return (
     <div className="overflow-y-auto">
@@ -16,23 +51,33 @@ function ProfilePage() {
           {/* Profile Picture Section */}
           <div className="flex justify-center items-center bg-[#00c0b5] mt-5 text-white w-[900px] mx-auto p-5 gap-5 rounded-lg">
             <div className="relative">
-              <div className="w-[122px] h-[122px] bg-gray-300 rounded-full border-4 border-white shadow-xl flex justify-center items-center">
+              <div className="w-[122px] h-[122px] bg-gray-300 rounded-full border-4 border-white shadow-xl flex justify-center items-center overflow-hidden">
                 <img
-                  src="https://avatar.iran.liara.run/public/44"
+                  src={profileImage}
                   alt="profile"
-                  className="h-30 w-32 rounded-full"
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = 'https://avatar.iran.liara.run/public/44';
+                  }}
                 />
                 {/* Upload Icon */}
                 <div className="absolute bottom-2 right-2 bg-white p-2 rounded-full shadow-md cursor-pointer">
                   <label htmlFor="profilePicUpload" className="cursor-pointer">
                     <FaCamera className="text-[#575757]" />
                   </label>
-                  <input type="file" id="profilePicUpload" className="hidden" />
+                  <input 
+                    type="file" 
+                    id="profilePicUpload" 
+                    className="hidden" 
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                  />
                 </div>
               </div>
             </div>
             <div>
-              <p className="text-xl md:text-3xl font-bold">Shah Aman</p>
+              <p className="text-xl md:text-3xl font-bold">{profileData?.data?.name || 'User'}</p>
               <p className="text-xl font-semibold">Admin</p>
             </div>
           </div>

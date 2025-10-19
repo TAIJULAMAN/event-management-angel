@@ -1,34 +1,62 @@
-import { useState } from "react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+import { useEffect, useState } from "react";
+import JoditComponent from "../../components/JoditComponent";
+import { 
+  useGetTermsAndConditionsQuery, 
+  useUpdateTermsAndConditionsMutation 
+} from "../../redux/api/termsApi";
+import { message } from "antd";
 
-function TermsCondition() {
-  const [content, setContent] = useState(
-    "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc. There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum.There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc. There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum."
-  );
+const TermsCondition = () => {
+  const [content, setContent] = useState("");
+  const { data, isLoading } = useGetTermsAndConditionsQuery();
+  const [updateTerms, { isLoading: isSubmitting }] = useUpdateTermsAndConditionsMutation();
+
+  const handleSubmit = async () => {
+    if (!content) {
+      message.error("Terms & Conditions content cannot be empty!");
+      return;
+    }
+
+    const requestData = {
+      TermsConditions: content,
+    };
+
+    try {
+      const res = await updateTerms({ requestData }).unwrap();
+      console.log("Response from updateTerms:", res);
+
+      if (res?.success) {
+        message.success(res?.message || "Terms & Conditions updated successfully!");
+      }
+    } catch (error) {
+      message.error(error?.data?.message || "Something went wrong!");
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    if (data?.data?.TermsConditions) {
+      setContent(data.data.TermsConditions);
+    }
+  }, [data]);
+
+  if (isLoading) return <>loading...</>;
 
   return (
-    <div className="px-5 md:px-0 py-5 md:py-10">
-      <h1 className="text-start text-3xl font-bold mb-5">Terms & Condition</h1>
-
-      <div className=" bg-white rounded shadow p-5 h-full">
-        <ReactQuill
-          style={{ padding: "10px" }}
-          theme="snow"
-          value={content}
-          onChange={setContent}
-        />
+    <div className="p-5">
+        <h1 className="text-start text-3xl font-bold mb-5">Terms & Conditions</h1>
+      <div className="bg-white rounded shadow p-5 h-full mb-5">
+        <JoditComponent setContent={setContent} content={content} />
       </div>
-      <div className="text-center py-5">
-        <button
-          onClick={() => console.log(content)}
-          className="bg-[#00c0b5] text-white font-semibold w-full py-2 rounded transition duration-200"
+      <button
+          onClick={handleSubmit}
+          disabled={isSubmitting}
+          className="bg-[#00c0b5] hover:bg-[#00a89e] text-white font-semibold w-full py-2 rounded transition duration-200 disabled:opacity-70"
         >
-          Save changes
+          {isSubmitting ? "Saving..." : "Save Changes"}
         </button>
-      </div>
     </div>
   );
-}
+};
 
 export default TermsCondition;
