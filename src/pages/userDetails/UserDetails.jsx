@@ -8,6 +8,7 @@ import { useGetAllUserQuery } from "../../redux/api/userApi";
 import { format } from 'date-fns';
 import { FiMail, FiPhone, FiMapPin, FiCalendar, FiUser } from 'react-icons/fi';
 import { getImageUrl } from "../../config/envConfig";
+import useDebounce from "../../hooks/useDebounce";
 
 function UserDetails() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,11 +21,12 @@ function UserDetails() {
   });
   const [searchTerm, setSearchTerm] = useState('');
   const [searchTimeout, setSearchTimeout] = useState(null);
+  const debouncedSearchTerm = useDebounce(searchTerm, 400);
 
   const { data, isLoading, isError, error } = useGetAllUserQuery({
     page: pagination.current,
     limit: pagination.pageSize,
-    searchTerm: searchTerm || undefined,
+    searchTerm: debouncedSearchTerm || undefined,
   });
 
   useEffect(() => {

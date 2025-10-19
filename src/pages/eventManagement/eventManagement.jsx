@@ -6,6 +6,7 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { FaRegEye } from "react-icons/fa";
 import { useGetAllEventsQuery } from "../../redux/api/eventManagementApi";
 import { getImageUrl } from "../../config/envConfig";
+import useDebounce from "../../hooks/useDebounce";
 
 function EventManagement() {
     const [searchTerm, setSearchTerm] = useState("");
@@ -17,9 +18,10 @@ function EventManagement() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isViewModalOpen, setIsViewModalOpen] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState(null);
+    const debouncedSearchTerm = useDebounce(searchTerm, 400);
 
     const { data: eventsData, isLoading, isFetching } = useGetAllEventsQuery({
-        searchTerm,
+        searchTerm: debouncedSearchTerm,
         page: pagination.current,
         limit: pagination.pageSize,
     });

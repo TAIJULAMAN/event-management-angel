@@ -6,6 +6,7 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { FaRegEye } from "react-icons/fa";
 import { useGetAllEventGroupQuery } from "../../redux/api/allEventGroups";
 import { getImageUrl } from "../../config/envConfig";
+import useDebounce from "../../hooks/useDebounce";
 
 function MediaSocial() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -17,9 +18,10 @@ function MediaSocial() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const debouncedSearchTerm = useDebounce(searchTerm, 400);
 
   const { data: eventsData, isLoading, isFetching } = useGetAllEventGroupQuery({
-    searchTerm,
+    searchTerm: debouncedSearchTerm,
     page: pagination.current,
     limit: pagination.pageSize,
   });
@@ -193,54 +195,144 @@ function MediaSocial() {
       </Modal>
 
       {/* View Event Group Modal */}
-      <Modal
-        open={isViewModalOpen}
-        title="Event Group Details"
-        centered
-        onCancel={handleViewCancel}
-        footer={null}
-        width={700}
-      >
-        {selectedEvent && (
-          <div className="space-y-4">
-            <div className="flex items-start gap-4">
-              <img
-                src={getImageUrl(selectedEvent.eventId?.photo)}
-                alt="Event"
-                className="w-40 h-32 object-cover rounded"
-              />
+{/* View Event Group Modal */}
+<Modal
+  open={isViewModalOpen}
+  title={null}
+  centered
+  onCancel={handleViewCancel}
+  footer={null}
+  width={800}
+  className="event-details-modal"
+>
+  {selectedEvent && (
+    <div className="relative">
+      {/* Header with gradient background and event image */}
+      <div className="relative h-64 w-full overflow-hidden rounded-t-lg">
+        <img
+          src={getImageUrl(selectedEvent.eventId?.photo)}
+          alt="Event"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+        <div className="absolute bottom-0 left-0 p-6 text-white">
+          <h2 className="text-3xl font-bold mb-2">{selectedEvent.eventId?.event_title}</h2>
+          <p className="text-lg opacity-90">Hosted by {selectedEvent.eventId?.hostId?.name || 'N/A'}</p>
+        </div>
+      </div>
+
+      <div className="p-6">
+        {/* Event Info Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div className="bg-white border border-gray-100 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-blue-50 rounded-lg">
+                <span className="text-blue-600 text-xl">📅</span>
+              </div>
               <div>
-                <h3 className="text-xl font-semibold">{selectedEvent.eventId?.event_title}</h3>
-                <p className="text-gray-600">Group: {selectedEvent.groupName}</p>
-                <p className="text-gray-600">Date: {selectedEvent.eventId?.date}</p>
-                <p className="text-gray-600">
-                  Time: {selectedEvent.eventId?.starting_time} - {selectedEvent.eventId?.ending_time}
-                </p>
-                <p className="text-gray-600">
-                  Host: {selectedEvent.eventId?.hostId?.name || 'N/A'}
+                <p className="text-sm text-gray-500">Date</p>
+                <p className="font-medium">{selectedEvent.eventId?.date}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white border border-gray-100 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-purple-50 rounded-lg">
+                <span className="text-purple-600 text-xl">⏰</span>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Time</p>
+                <p className="font-medium">
+                  {selectedEvent.eventId?.starting_time} - {selectedEvent.eventId?.ending_time}
                 </p>
               </div>
             </div>
-            <div className="mt-4">
-              <h4 className="font-semibold">Event Details</h4>
-              <div className="grid grid-cols-2 gap-4 mt-2">
-                <div>
-                  <p className="text-gray-600">Category:</p>
-                  <p>{selectedEvent.eventId?.event_category}</p>
-                </div>
-                <div>
-                  <p className="text-gray-600">Max Capacity:</p>
-                  <p>{selectedEvent.eventId?.audience_settings?.max_capacity || 'N/A'}</p>
-                </div>
-                <div>
-                  <p className="text-gray-600">Total Members:</p>
-                  <p>{selectedEvent.totalMember}</p>
+          </div>
+
+          <div className="bg-white border border-gray-100 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-green-50 rounded-lg">
+                <span className="text-green-600 text-xl">👥</span>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Group Members</p>
+                <p className="font-medium">{selectedEvent.totalMember} members</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Group and Event Details */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-white border border-gray-100 rounded-xl p-5 shadow-sm">
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <div className="w-2 h-2 bg-[#00c0b5] rounded-full"></div>
+              Group Information
+            </h3>
+            <div className="space-y-4">
+              <div>
+                <p className="text-sm text-gray-500 mb-1">Group Name</p>
+                <p className="font-medium">{selectedEvent.groupName}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500 mb-1">Group Members</p>
+                <p className="font-medium">{selectedEvent.totalMember} members</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500 mb-1">Group Status</p>
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                  Active
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white border border-gray-100 rounded-xl p-5 shadow-sm">
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <div className="w-2 h-2 bg-[#00c0b5] rounded-full"></div>
+              Event Details
+            </h3>
+            <div className="space-y-4">
+              <div>
+                <p className="text-sm text-gray-500 mb-1">Category</p>
+                <p className="font-medium capitalize">{selectedEvent.eventId?.event_category}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500 mb-1">Venue Capacity</p>
+                <p className="font-medium">
+                  {selectedEvent.eventId?.audience_settings?.max_capacity || 'N/A'} people
+                </p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500 mb-1">Event Host</p>
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+                    <span className="text-gray-500 text-sm">
+                      {selectedEvent.eventId?.hostId?.name?.charAt(0) || 'H'}
+                    </span>
+                  </div>
+                  <span className="font-medium">{selectedEvent.eventId?.hostId?.name || 'N/A'}</span>
                 </div>
               </div>
             </div>
           </div>
-        )}
-      </Modal>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="mt-8 pt-6 border-t border-gray-100 flex justify-end gap-3">
+          <button
+            onClick={handleViewCancel}
+            className="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+          >
+            Close
+          </button>
+       
+        </div>
+      </div>
+    </div>
+  )}
+</Modal>
     </div>
   );
 }
