@@ -30,10 +30,10 @@ export const userApi = baseApi.injectEndpoints({
       providesTags: ["user"],
     }),
     changeStatus: builder.mutation({
-      query: (data) => ({
-        url: `auth/change_status/${data?.id}`,
+      query: ({ id, status }) => ({
+        url: `auth/change_status/${id}`,
         method: "PATCH",
-        body: data.status,
+        body: { status },
       }),
       invalidatesTags: ["user"],
     }),

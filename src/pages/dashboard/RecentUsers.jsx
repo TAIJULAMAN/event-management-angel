@@ -16,6 +16,7 @@ const RecentUsers = () => {
     date: user.createdAt ? format(new Date(user.createdAt), 'dd/MM/yyyy') : 'N/A',
     phone: user.phoneNumber || 'N/A',
         createdAt: user.createdAt,
+    status: user.status,
     email: user.email || 'N/A',
     location: 'N/A', // Location data not available in the API response
   })) || [];
@@ -71,7 +72,7 @@ const RecentUsers = () => {
     key: "status",
     width: 120,
     render: (_, record) => {
-      const status = record.status === 'isProgress' ? 'isProgress' : record.status === 'blocked' ? 'blocked' : 'isProgress';
+      const status =record.status === 'blocked' ? 'blocked' : 'isProgress';
       const statusConfig = {
         isProgress: { text: 'Active', color: 'green' },
         blocked: { text: 'Blocked', color: 'red' }

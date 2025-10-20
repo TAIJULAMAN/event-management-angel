@@ -4,7 +4,7 @@ import { IoSearch } from "react-icons/io5";
 import PageHeading from "../../components/PageHeading/PageHeading";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { FaRegEye } from "react-icons/fa";
-import { useGetAllUserQuery } from "../../redux/api/userApi";
+import { useGetAllUserQuery, useChangeStatusMutation } from "../../redux/api/userApi";
 import { format } from 'date-fns';
 import { FiMail, FiPhone, FiMapPin, FiCalendar, FiUser } from 'react-icons/fi';
 import { getImageUrl } from "../../config/envConfig";
@@ -14,6 +14,9 @@ function UserDetails() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
+  const [statusConfirmLoading, setStatusConfirmLoading] = useState(false);
+  const [pendingStatusChange, setPendingStatusChange] = useState(null);
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 10,
@@ -28,6 +31,7 @@ function UserDetails() {
     limit: pagination.pageSize,
     searchTerm: debouncedSearchTerm || undefined,
   });
+  const [changeStatus, { isLoading: isChangingStatus }] = useChangeStatusMutation();
 
   useEffect(() => {
     if (data?.data?.meta) {
@@ -77,6 +81,7 @@ function UserDetails() {
     email: user.email || 'N/A',
     location: 'N/A', // Not in the API response
     createdAt: user.createdAt,
+    status: user.status,
   })) || [];
 
   console.log(dataSource);
@@ -128,12 +133,54 @@ function UserDetails() {
       width: 150,
     },
     {
+      title: "Status",
+      key: "status",
+      width: 120,
+      render: (_, record) => {
+        const isBlocked = record.status === 'blocked';
+        const color = isBlocked ? 'red' : 'green';
+        const text = isBlocked ? 'Blocked' : 'Active';
+        return (
+          <span
+            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium"
+            style={{ backgroundColor: `${color}20`, color }}
+          >
+            <span className="w-2 h-2 rounded-full mr-1.5" style={{ backgroundColor: color }} />
+            {text}
+          </span>
+        );
+      },
+    },
+    {
+      title: "Change Status",
+      key: "changeStatus",
+      width: 160,
+      render: (_, record) => (
+        <button
+          onClick={() => {
+            const next = record.status === 'blocked' ? 'isProgress' : 'blocked';
+            setPendingStatusChange({ id: record.key, next, name: record.name });
+            setIsStatusModalOpen(true);
+          }}
+          disabled={isChangingStatus}
+          className={`px-3 py-1 rounded-md text-sm font-medium border transition-colors ${
+            record.status === 'blocked'
+              ? 'text-green-600 border-green-200 hover:bg-green-50'
+              : 'text-red-600 border-red-200 hover:bg-red-50'
+          }`}
+          title={record.status === 'blocked' ? 'Set Active' : 'Block User'}
+        >
+          {record.status === 'blocked' ? 'Set Active' : 'Block'}
+        </button>
+      ),
+    },
+    {
       title: "Actions",
       key: "actions",
       fixed: 'right',
-      width: 120,
+      width: 140,
       render: (_, record) => (
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <button 
             onClick={() => showViewModal(record)}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -274,6 +321,40 @@ function UserDetails() {
             </button>
           </div>
         </div>
+      </Modal>
+
+      {/* Change Status Confirmation Modal */}
+      <Modal
+        title="Confirm Status Change"
+        open={isStatusModalOpen}
+        confirmLoading={statusConfirmLoading}
+        onOk={async () => {
+          if (!pendingStatusChange) return;
+          try {
+            setStatusConfirmLoading(true);
+            await changeStatus({ id: pendingStatusChange.id, status: pendingStatusChange.next }).unwrap();
+            setIsStatusModalOpen(false);
+            setPendingStatusChange(null);
+          } catch (err) {
+            // Handle error
+            console.error('Failed to change status:', err);
+          } finally {
+            setStatusConfirmLoading(false);
+          }
+        }}
+        onCancel={() => {
+          setIsStatusModalOpen(false);
+          setPendingStatusChange(null);
+        }}
+        centered
+      >
+        <p>
+          Are you sure you want to set
+          <span className="font-semibold"> {pendingStatusChange?.name} </span>
+          to
+          <span className="font-semibold"> {pendingStatusChange?.next === 'blocked' ? 'Blocked' : 'Active'} </span>
+          ?
+        </p>
       </Modal>
 
       {/* View User Details Modal */}
