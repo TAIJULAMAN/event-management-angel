@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 import { getImageUrl } from "../../config/envConfig";
 
 const RecentUsers = () => {
-  const { data, isLoading, isError, error } = useGetAllUserQuery({ page: 1, limit: 10 });
+  const { data, isLoading, isError, error } = useGetAllUserQuery({ page: 1, limit: 5 });
 
   // Format the user data for the table
   const dataSource = data?.data?.all_users?.map((user, index) => ({
@@ -66,6 +66,36 @@ const RecentUsers = () => {
       ),
       width: 150,
     },
+     {
+    title: "Status",
+    key: "status",
+    width: 120,
+    render: (_, record) => {
+      const status = record.status === 'isProgress' ? 'isProgress' : record.status === 'blocked' ? 'blocked' : 'isProgress';
+      const statusConfig = {
+        isProgress: { text: 'Active', color: 'green' },
+        blocked: { text: 'Blocked', color: 'red' }
+      };
+      
+      const { text, color } = statusConfig[status] || statusConfig.isProgress;
+      
+      return (
+        <span 
+          className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium"
+          style={{ 
+            backgroundColor: `${color}20`, // 20% opacity
+            color: color
+          }}
+        >
+          <span 
+            className="w-2 h-2 rounded-full mr-1.5" 
+            style={{ backgroundColor: color }}
+          ></span>
+          {text}
+        </span>
+      );
+    },
+  },
  
   ];
 

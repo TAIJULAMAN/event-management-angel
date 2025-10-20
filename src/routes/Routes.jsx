@@ -17,7 +17,6 @@ import EventManagement from "../pages/eventManagement/eventManagement";
 import Reports from "../pages/Reports/Reports";
 import Interactivity from "../pages/Interactivity/Interactivity";
 
-
 const router = createBrowserRouter([
   {
     path: "/sign-in",
@@ -59,7 +58,7 @@ const router = createBrowserRouter([
 
       // media and social
       {
-        path: "/media-social",
+        path: "/all-event-groups",
         element: <MediaSocial />,
       },
       {
