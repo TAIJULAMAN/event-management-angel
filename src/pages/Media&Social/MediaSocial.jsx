@@ -208,7 +208,7 @@ function MediaSocial() {
   {selectedEvent && (
     <div className="relative">
       {/* Header with gradient background and event image */}
-      <div className="relative h-64 w-full overflow-hidden rounded-t-lg">
+      <div className="relative h-64 w-full overflow-hidden rounded-t-lg mt-10">
         <img
           src={getImageUrl(selectedEvent.eventId?.photo)}
           alt="Event"

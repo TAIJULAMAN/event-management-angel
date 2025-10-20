@@ -15,7 +15,7 @@ import MediaSocial from "../pages/Media&Social/MediaSocial";
 import EventManagement from "../pages/eventManagement/eventManagement";
 // import GroupManagement from "../pages/groupManagement/groupManagement";
 import Reports from "../pages/Reports/Reports";
-import Interactivity from "../pages/Interactivity/Interactivity";
+import AllEventChatroom from "../pages/Interactivity/Interactivity";
 
 const router = createBrowserRouter([
   {
@@ -62,8 +62,8 @@ const router = createBrowserRouter([
         element: <MediaSocial />,
       },
       {
-        path: "/interactivity",
-        element: <Interactivity />,
+        path: "/all-event-chatroom",
+        element: <AllEventChatroom />,
       },
 
       // settings

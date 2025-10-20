@@ -6,7 +6,7 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { FaRegEye } from "react-icons/fa";
 import { useGetAllUserQuery, useChangeStatusMutation } from "../../redux/api/userApi";
 import { format } from 'date-fns';
-import { FiMail, FiPhone, FiMapPin, FiCalendar, FiUser } from 'react-icons/fi';
+import { FiMail, FiPhone, FiCalendar, FiUser } from 'react-icons/fi';
 import { getImageUrl } from "../../config/envConfig";
 import useDebounce from "../../hooks/useDebounce";
 
@@ -456,7 +456,7 @@ function UserDetails() {
               </div>
 
               {/* Location Information */}
-              <div>
+              {/* <div>
                 <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
                   <div className="w-2 h-2 bg-[#00c0b5] rounded-full"></div>
                   Location Information
@@ -474,7 +474,7 @@ function UserDetails() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
 
               {/* Action buttons */}
               <div className="flex justify-end items-center pt-6 border-t border-gray-200 mt-6">

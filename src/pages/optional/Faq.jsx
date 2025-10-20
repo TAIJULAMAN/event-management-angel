@@ -24,7 +24,7 @@ const FAQ = () => {
     {
       title: "What is JavaScript, and how is it used in web development?",
       description:
-        "JavaScript is a scripting language that enables interactivity on web pages. It is widely used for tasks such as form validation, animations, and dynamic content updates, enhancing user experience.",
+        "JavaScript is a scripting language that enables all-event-chatroom on web pages. It is widely used for tasks such as form validation, animations, and dynamic content updates, enhancing user experience.",
     },
     {
       title: "Explain the concept of responsive web design.",
@@ -84,7 +84,7 @@ const FAQ = () => {
               onClick={() => handleClick(index)}
             >
               <h2 className="text-base font-normal md:font-bold md:text-2xl flex gap-2 items-center">
-                <FaRegQuestionCircle  className="w-5 h-5 hidden md:flex"/> 
+                <FaRegQuestionCircle className="w-5 h-5 hidden md:flex" />
                 {accordion.title}
               </h2>
               <div className="flex gap-2 md:gap-4 items-center">
@@ -151,48 +151,47 @@ const FAQ = () => {
           },
         }}
       >
-
-      <Modal
-        open={addModalOpen}
-        centered
-        onCancel={handleCancel2}
-        footer={null}
-        title="Add FAQ"
-      >
-        <div className="p-5">
-          <div className="flex justify-between items-center gap-5">
-            <div>
-              <label className="text-[#0D0D0D] text-[0.9rem] mb-3">
-                Question
-              </label>
-              <input
-                type="text"
-                className="border-2 border-[#e5eaf2] p-2 w-full rounded transition duration-200 mt-3"
-                placeholder="Enter your question"
-              />
+        <Modal
+          open={addModalOpen}
+          centered
+          onCancel={handleCancel2}
+          footer={null}
+          title="Add FAQ"
+        >
+          <div className="p-5">
+            <div className="flex justify-between items-center gap-5">
+              <div>
+                <label className="text-[#0D0D0D] text-[0.9rem] mb-3">
+                  Question
+                </label>
+                <input
+                  type="text"
+                  className="border-2 border-[#e5eaf2] p-2 w-full rounded transition duration-200 mt-3"
+                  placeholder="Enter your question"
+                />
+              </div>
+              <div>
+                <label className="text-[#0D0D0D] text-[0.9rem] mb-3">
+                  Answer
+                </label>
+                <input
+                  type="text"
+                  className="border-2 border-[#e5eaf2] p-2 w-full rounded transition duration-200 mt-3"
+                  placeholder="Enter your answer"
+                />
+              </div>
             </div>
-            <div>
-              <label className="text-[#0D0D0D] text-[0.9rem] mb-3">
-                Answer
-              </label>
-              <input
-                type="text"
-                className="border-2 border-[#e5eaf2] p-2 w-full rounded transition duration-200 mt-3"
-                placeholder="Enter your answer"
-              />
+
+            <div className="text-center py-5">
+              <button
+                onClick={handleOk2}
+                className="bg-[#FF0000] text-white font-semibold w-1/3 py-2 px-5 rounded transition duration-200"
+              >
+                CONFIRM
+              </button>
             </div>
           </div>
-
-          <div className="text-center py-5">
-            <button
-              onClick={handleOk2}
-              className="bg-[#FF0000] text-white font-semibold w-1/3 py-2 px-5 rounded transition duration-200"
-            >
-              CONFIRM
-            </button>
-          </div>
-        </div>
-      </Modal>
+        </Modal>
       </ConfigProvider>
     </div>
   );
