@@ -12,7 +12,18 @@ export const allEventChatRoomApi = baseApi.injectEndpoints({
             }),
             providesTags: ["allEventChatRoom"],
         }),
+        specificEventWiseConversation: builder.query({
+            query: ({ eventId, page, limit }) => ({
+                url: `conversation/specific_event_wise_conversation/${eventId}`,
+                method: "GET",
+                params: {
+                    ...(page ? { page } : {}),
+                    ...(limit ? { limit } : {}),
+                },
+            }),
+            providesTags: ["specificEventWiseConversation"],
+        }),
     }),
 });
 
-export const { useGetAllEventChatRoomQuery } = allEventChatRoomApi;
+export const { useGetAllEventChatRoomQuery, useSpecificEventWiseConversationQuery } = allEventChatRoomApi;

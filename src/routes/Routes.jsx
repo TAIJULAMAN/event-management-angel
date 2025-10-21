@@ -55,6 +55,10 @@ const router = createBrowserRouter([
         path: "/chat",
         element: <Chat />,
       },
+      {
+        path: "/chat/:eventId",
+        element: <Chat />,
+      },
 
       // media and social
       {
