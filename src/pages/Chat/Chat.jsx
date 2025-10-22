@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { AiOutlineFileAdd, AiOutlineSearch } from "react-icons/ai";
 import { RiSendPlane2Fill } from "react-icons/ri";
 import { FiMenu, FiMoreVertical } from "react-icons/fi";
+import { FiTrash2 } from "react-icons/fi";
+import { Popconfirm, Tooltip } from "antd";
 
 
 import { useParams, useNavigate } from "react-router-dom";
@@ -14,6 +16,7 @@ import useSocket from "../../hooks/useSocket";
 import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import defaultIMG from "../../assets/defaultImg";
+import { useNewMessageMutation, useDeleteMessageMutation } from "../../redux/api/allEventChatRoom";
 
 const Chat = () => {
   const [selectedRoom, setSelectedRoom] = useState(null);
@@ -47,7 +50,9 @@ const Chat = () => {
   const token = useSelector((state) => state?.auth?.token);
   const decoded = token ? jwtDecode(token) : null;
   const currentUserId = decoded?.id;
-
+  const [createMessage, { isLoading: isUploading }] = useNewMessageMutation();
+  const [deleteMessage, { isLoading: isDeleting }] = useDeleteMessageMutation();
+  
   const {
     data: allEventChatRoomData,
     isLoading,
@@ -202,7 +207,17 @@ const Chat = () => {
     scrollToBottom();
   }, [messages]);
 
-  const sendMessage = () => {
+  const handleDeleteMessage = async (id) => {
+    if (!id) return;
+    try {
+      await deleteMessage(id).unwrap();
+      setMessages((prev) => prev.filter((m) => m._id !== id));
+    } catch (e) {
+      console.error("Failed to delete message", e);
+    }
+  };
+
+  const sendMessage = async () => {
     if (!newMessage.trim() && !pendingAttachment) return;
     const other = messages.find(
       (m) => m?.msgByUserId?._id && m?.msgByUserId?._id !== currentUserId
@@ -224,31 +239,36 @@ const Chat = () => {
       return;
     }
     const text = newMessage.trim();
+    if (pendingAttachment) {
+      try {
+        const form = new FormData();
+        form.append(
+          "data",
+          JSON.stringify({ text, eventId, receiverId })
+        );
+        form.append("imageUrl", pendingAttachment.file);
+        await createMessage(form).unwrap();
+        // Clear input and preview after successful upload
+        setNewMessage("");
+        if (pendingAttachment?.url) URL.revokeObjectURL(pendingAttachment.url);
+        setPendingAttachment(null);
+        if (fileInputRef.current) fileInputRef.current.value = "";
+      } catch (err) {
+        console.error("Failed to send attachment message", err);
+      }
+      return;
+    }
+
+    // Text-only -> use socket emit + optimistic
     emitMessage({ text, receiverId, eventId });
-    // Optimistic UI update
     const optimistic = {
       _id: `tmp-${Date.now()}`,
       text,
       msgByUserId: { _id: currentUserId },
       createdAt: new Date().toISOString(),
     };
-    let next = (prev) => prev.concat(optimistic);
-    // If an attachment is pending, add a second optimistic indicator bubble
-    if (pendingAttachment) {
-      const attachMsg = {
-        _id: `tmp-file-${Date.now()}`,
-        text: `📎 ${pendingAttachment.name}`,
-        msgByUserId: { _id: currentUserId },
-        createdAt: new Date().toISOString(),
-      };
-      next = (prev) => prev.concat(optimistic, attachMsg);
-    }
-    setMessages(next);
+    setMessages((prev) => prev.concat(optimistic));
     setNewMessage("");
-    // Clear attachment preview
-    if (pendingAttachment?.url) URL.revokeObjectURL(pendingAttachment.url);
-    setPendingAttachment(null);
-    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const handleKeyPress = (e) => {
@@ -487,10 +507,43 @@ const Chat = () => {
                           ? format(new Date(msg.createdAt), "hh:mm a")
                           : ""}
                       </span>
+                      {(msg?.msgByUserId?._id === currentUserId || msg?.msgByUserId === currentUserId) && (
+                        <Popconfirm
+                          title="Delete message"
+                          description="Are you sure you want to delete this message?"
+                          okText="Delete"
+                          cancelText="Cancel"
+                          okButtonProps={{ danger: true, loading: isDeleting }}
+                          onConfirm={() => handleDeleteMessage(msg._id)}
+                        >
+                          <Tooltip title="Delete">
+                            <button
+                              disabled={isDeleting}
+                              className="ml-2 p-1 rounded hover:bg-red-50 text-red-500 hover:text-red-600 disabled:opacity-50"
+                            >
+                              <FiTrash2 className="w-4 h-4" />
+                            </button>
+                          </Tooltip>
+                        </Popconfirm>
+                      )}
                     </div>
-                    <div className="mt-1 bg-white border rounded-2xl rounded-bl-md px-4 py-2 shadow-sm max-w-xl">
-                      <p className="text-sm leading-relaxed">{msg?.text}</p>
-                    </div>
+                    {msg?.text && (
+                      <div className="mt-1 bg-white border rounded-2xl rounded-bl-md px-4 py-2 shadow-sm max-w-xl">
+                        <p className="text-sm leading-relaxed">{msg?.text}</p>
+                      </div>
+                    )}
+                    {Array.isArray(msg?.imageUrl) && msg.imageUrl.length > 0 && (
+                      <div className="mt-2 grid grid-cols-2 gap-2 max-w-xl">
+                        {msg.imageUrl.map((u, idx) => (
+                          <img
+                            key={idx}
+                            src={getImageUrl(u)}
+                            alt="attachment"
+                            className="w-full max-h-64 object-cover rounded-lg border border-gray-200"
+                          />
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
@@ -547,7 +600,7 @@ const Chat = () => {
                   ref={fileInputRef}
                   onChange={handleFileUpload}
                   className="hidden"
-                  accept="image/*,application/pdf,.doc,.docx"
+                  accept="image/*,video/*,audio/*,application/pdf,.doc,.docx"
                 />
                 <button
                   onClick={() => fileInputRef.current?.click()}
@@ -557,9 +610,9 @@ const Chat = () => {
                 </button>
                 <button
                   onClick={sendMessage}
-                  disabled={!newMessage.trim() && !pendingAttachment}
+                  disabled={(!newMessage.trim() && !pendingAttachment) || isUploading}
                   className={`p-3 rounded-full transition-all ${
-                    newMessage.trim() || pendingAttachment
+                    (newMessage.trim() || pendingAttachment) && !isUploading
                       ? "bg-teal-500 hover:bg-teal-600 text-white shadow-lg"
                       : "bg-gray-200 text-gray-400 cursor-not-allowed"
                   }`}

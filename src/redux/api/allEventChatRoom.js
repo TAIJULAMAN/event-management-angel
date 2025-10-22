@@ -23,7 +23,20 @@ export const allEventChatRoomApi = baseApi.injectEndpoints({
             }),
             providesTags: ["specificEventWiseConversation"],
         }),
+        newMessage: builder.mutation({
+            query: (data) => ({
+                url: "message/new_message",
+                method: "POST",
+                body: data, //form data 
+            }),
+        }),
+        deleteMessage: builder.mutation({
+            query: (id) => ({
+                url: `message/delete_message/${id}`,
+                method: "DELETE",
+            }),
+        }),
     }),
 });
 
-export const { useGetAllEventChatRoomQuery, useSpecificEventWiseConversationQuery } = allEventChatRoomApi;
+export const { useGetAllEventChatRoomQuery, useSpecificEventWiseConversationQuery, useNewMessageMutation, useDeleteMessageMutation } = allEventChatRoomApi;
