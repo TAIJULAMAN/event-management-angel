@@ -1,116 +1,131 @@
 import { useState, useEffect, useRef } from "react";
-import { AiOutlineSearch } from "react-icons/ai";
+import { AiOutlineFileAdd, AiOutlineSearch } from "react-icons/ai";
 import { RiSendPlane2Fill } from "react-icons/ri";
 import { FiMenu, FiMoreVertical } from "react-icons/fi";
-import { IoImagesOutline, } from "react-icons/io5";
-//
 
-import { useParams } from "react-router-dom";
+
+import { useParams, useNavigate } from "react-router-dom";
 import { useSpecificEventWiseConversationQuery } from "../../redux/api/allEventChatRoom";
 import { getImageUrl } from "../../config/envConfig";
 import { format } from "date-fns";
+import { useGetAllEventChatRoomQuery } from "../../redux/api/allEventChatRoom";
+import useDebounce from "../../hooks/useDebounce";
+import useSocket from "../../hooks/useSocket";
+import { useSelector } from "react-redux";
+import { jwtDecode } from "jwt-decode";
 
-const users = [
-  {
-    id: 1,
-    name: "Dr. Sarah Johnson",
-    message: "How are you feeling today?",
-    time: "2:45 PM",
-    avatar: "https://avatar.iran.liara.run/public/28",
-    online: true,
-    unread: 2,
-  },
-  {
-    id: 2,
-    name: "Patient Alex Smith",
-    message: "Thank you for the prescription",
-    time: "1:30 PM",
-    avatar: "https://avatar.iran.liara.run/public/27",
-    online: false,
-    unread: 0,
-  },
-  {
-    id: 3,
-    name: "Dr. Michael Brown",
-    message: "Your test results are ready",
-    time: "12:15 PM",
-    avatar: "https://avatar.iran.liara.run/public/29",
-    online: true,
-    unread: 1,
-  },
-  {
-    id: 4,
-    name: "Patient Emma Wilson",
-    message: "When is my next appointment?",
-    time: "11:00 AM",
-    avatar: "https://avatar.iran.liara.run/public/30",
-    online: false,
-    unread: 0,
-  },
-  {
-    id: 5,
-    name: "Dr. Lisa Davis",
-    message: "Please take your medication on time",
-    time: "10:30 AM",
-    avatar: "https://avatar.iran.liara.run/public/31",
-    online: true,
-    unread: 3,
-  },
-  {
-    id: 6,
-    name: "Patient John Doe",
-    message: "I'm feeling much better now",
-    time: "9:45 AM",
-    avatar: "https://avatar.iran.liara.run/public/32",
-    online: false,
-    unread: 0,
-  },
-  {
-    id: 7,
-    name: "Dr. Robert Miller",
-    message: "Let's schedule a follow-up",
-    time: "Yesterday",
-    avatar: "https://avatar.iran.liara.run/public/33",
-    online: false,
-    unread: 0,
-  },
-  {
-    id: 8,
-    name: "Patient Mary Johnson",
-    message: "Thank you for your help",
-    time: "Yesterday",
-    avatar: "https://avatar.iran.liara.run/public/34",
-    online: true,
-    unread: 0,
-  },
-];
 
 const Chat = () => {
-  const [selectedUser, setSelectedUser] = useState(users[0]);
+  const [selectedRoom, setSelectedRoom] = useState(null);
   const [messages, setMessages] = useState([]);
 
   const [newMessage, setNewMessage] = useState("");
   const [showSidebar, setShowSidebar] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearch = useDebounce(searchTerm, 400);
+  const [pagination, setPagination] = useState({ current: 1, pageSize: 10, total: 0, totalPage: 1 });
+  const [rooms, setRooms] = useState([]);
   //
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
+  const roomsListRef = useRef(null);
 
   const { eventId } = useParams();
-  console.log(eventId);
+  const navigate = useNavigate();
+  // console.log(eventId);
+  const token = useSelector((state) => state?.auth?.token);
+  const decoded = token ? jwtDecode(token) : null;
+  const currentUserId = decoded?.id;
+
+
+  const { data: allEventChatRoomData, isLoading, isError } = useGetAllEventChatRoomQuery({
+    page: pagination.current,
+    limit: pagination.pageSize,
+    searchTerm: debouncedSearch,
+  });
   const { data: convoMessages, isLoading: isMessagesLoading, isError: isMessagesError } = useSpecificEventWiseConversationQuery(
     { eventId },
     { skip: !eventId }
   );
+
+  const { connected, sendMessage: emitMessage } = useSocket({
+    serverUrl: "http://10.10.20.13:3056",
+    userId: currentUserId,
+    eventId,
+  });
+
+  const initialSendRef = useRef({});
+
+  useEffect(() => {
+    if (!connected || !eventId) return;
+    const recvId = (convoMessages?.data?.messages || [])
+      .find(m => m?.msgByUserId?._id && m.msgByUserId._id !== currentUserId)?.msgByUserId?._id;
+    if (!recvId) return;
+    if (!initialSendRef.current[eventId]) {
+      emitMessage({ text: "hello ", receiverId: recvId, eventId });
+      initialSendRef.current[eventId] = true;
+    }
+  }, [connected, eventId, convoMessages, currentUserId, emitMessage]);
+
+
+
 
   useEffect(() => {
     const apiMsgs = convoMessages?.data?.messages || [];
     setMessages(apiMsgs);
   }, [convoMessages]);
 
-  const filteredUsers = users.filter(user =>
-    user.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  useEffect(() => {
+    console.log("socket.connected:", connected);
+  }, [connected]);
+
+  // Reset and refetch when search changes
+  useEffect(() => {
+    setRooms([]);
+    setPagination((prev) => ({ ...prev, current: 1 }));
+  }, [debouncedSearch]);
+
+  // Append fetched rooms and update pagination metadata
+  useEffect(() => {
+    const fetched = allEventChatRoomData?.data?.all_event_chatroom || [];
+    const meta = allEventChatRoomData?.data?.meta;
+    if (meta) {
+      setPagination((prev) => ({
+        ...prev,
+        total: meta.total ?? prev.total,
+        totalPage: meta.totalPage ?? prev.totalPage,
+      }));
+    }
+    if (fetched.length) {
+      setRooms((prev) => {
+        // Basic de-dup based on _id
+        const existing = new Set(prev.map((r) => r._id));
+        const add = fetched.filter((r) => !existing.has(r._id));
+        return prev.concat(add);
+      });
+    } else if ((meta?.page ?? 1) === 1 && !isLoading && fetched.length === 0) {
+      // No results on first page
+      setRooms([]);
+    }
+  }, [allEventChatRoomData, isLoading]);
+
+  // If no eventId in route, default to first room when list is available
+  useEffect(() => {
+    if (!eventId && !selectedRoom && rooms.length) {
+      setSelectedRoom(rooms[0]);
+    }
+  }, [rooms, selectedRoom, eventId]);
+
+  // When eventId exists in route, auto-select the matching room by eventId._id
+  useEffect(() => {
+    if (!eventId || !rooms.length) return;
+    const match = rooms.find((r) => r?.eventId?._id === eventId);
+    if (match && (!selectedRoom || selectedRoom?._id !== match._id)) {
+      setSelectedRoom(match);
+    }
+  }, [rooms, eventId, selectedRoom]);
+  // Server-side search already applied; no client filter needed
+  const filteredRooms = rooms;
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -121,8 +136,10 @@ const Chat = () => {
   }, [messages]);
 
   const sendMessage = () => {
-    // Hooked up UI only; sending not implemented in this scope
     if (!newMessage.trim()) return;
+    const other = messages.find((m) => m?.msgByUserId?._id && m?.msgByUserId?._id !== currentUserId);
+    const receiverId = other?.msgByUserId?._id || undefined;
+    emitMessage({ text: newMessage.trim(), receiverId, eventId });
     setNewMessage("");
   };
 
@@ -196,41 +213,54 @@ const Chat = () => {
           </div>
 
           {/* User List */}
-          <div className="flex-1 overflow-y-auto">
-            {filteredUsers.map((user) => (
+          <div className="flex-1 overflow-y-auto" onScroll={(e) => {
+            const el = e.currentTarget;
+            if (el.scrollTop + el.clientHeight >= el.scrollHeight - 50) {
+              if (!isLoading && pagination.current < pagination.totalPage) {
+                setPagination((prev) => ({ ...prev, current: prev.current + 1 }));
+              }
+            }
+          }} ref={roomsListRef}>
+            {isLoading && (
+              <div className="text-center text-gray-500 py-4">Loading chat rooms...</div>
+            )}
+            {isError && !isLoading && (
+              <div className="text-center text-red-500 py-4">Failed to load chat rooms.</div>
+            )}
+            {!isLoading && !isError && filteredRooms.length === 0 && (
+              <div className="text-center text-gray-500 py-4">No chat rooms found.</div>
+            )}
+            {!isLoading && !isError && filteredRooms.map((room) => (
               <div
-                key={user.id}
-                className={`flex items-center gap-3 p-4 cursor-pointer border-b border-gray-50 hover:bg-gray-50 transition-colors ${selectedUser.id === user.id ? "bg-teal-50 border-r-4 border-r-teal-500" : ""
-                  }`}
+                key={room._id}
+                className={`flex items-center gap-3 p-4 cursor-pointer border-b border-gray-50 hover:bg-gray-50 transition-colors ${selectedRoom?._id === room._id ? "bg-teal-50 border-r-4 border-r-teal-500" : ""}`}
                 onClick={() => {
-                  setSelectedUser(user);
+                  setSelectedRoom(room);
                   setShowSidebar(false);
+                  if (room?.eventId?._id) {
+                    navigate(`/chat/${room.eventId._id}`);
+                  }
                 }}
               >
                 <div className="relative">
                   <img
-                    src={user.avatar}
-                    alt={user.name}
+                    src={getImageUrl(room?.eventId?.photo) || `https://avatar.iran.liara.run/public/${room?._id}`}
+                    alt={room?.chatRoomName}
                     className="h-12 w-12 rounded-full object-cover"
                   />
-                  {user.online && (
-                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
-                  )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-gray-900 truncate">{user.name}</h3>
-                    <span className="text-xs text-gray-500">{user.time}</span>
+                    <h3 className="font-semibold text-gray-900 truncate">{room?.chatRoomName}</h3>
+                    <span className="text-xs text-gray-500">{room?.createdAt ? format(new Date(room.createdAt), 'hh:mm a') : ''}</span>
                   </div>
-                  <p className="text-sm text-gray-600 truncate mt-1">{user.message}</p>
+                  <p className="text-sm text-gray-600 truncate mt-1">{room?.eventId?.event_title || ''}</p>
                 </div>
-                {user.unread > 0 && (
-                  <div className="bg-teal-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                    {user.unread}
-                  </div>
-                )}
               </div>
             ))}
+            {!isLoading && pagination.current < pagination.totalPage && (
+              <div className="text-center text-gray-400 py-3">Scroll to load more…</div>
+            )}
           </div>
         </div>
 
@@ -241,19 +271,14 @@ const Chat = () => {
             <div className="flex items-center gap-4">
               <div className="relative">
                 <img
-                  src={selectedUser.avatar}
-                  alt={selectedUser.name}
+                  src={getImageUrl(selectedRoom?.eventId?.photo) || (selectedRoom?._id ? `https://avatar.iran.liara.run/public/${selectedRoom?._id}` : "https://avatar.iran.liara.run/public/1")}
+                  alt={selectedRoom?.chatRoomName || "Chat Room"}
                   className="h-12 w-12 rounded-full object-cover border-2 border-white/20"
                 />
-                {selectedUser.online && (
-                  <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 border-2 border-white rounded-full"></div>
-                )}
               </div>
               <div className="flex-1">
-                <h2 className="text-lg font-semibold">{selectedUser.name}</h2>
-                <p className="text-sm text-teal-100">
-                  {selectedUser.online ? "Online" : "Last seen " + selectedUser.time}
-                </p>
+                <h2 className="text-lg font-semibold">{selectedRoom?.chatRoomName || "Select a chat room"}</h2>
+                <p className="text-sm text-teal-100">{selectedRoom?.eventId?.event_title || ''}</p>
               </div>
               <button className="p-2 hover:bg-white/10 rounded-full transition-colors">
                 <FiMoreVertical className="w-5 h-5" />
@@ -318,7 +343,7 @@ const Chat = () => {
                   onClick={() => fileInputRef.current?.click()}
                   className="p-3 text-gray-500 hover:text-teal-600 hover:bg-teal-50 rounded-full transition-colors"
                 >
-                  <IoImagesOutline className="w-5 h-5" />
+                  <AiOutlineFileAdd className="w-5 h-5" />
                 </button>
                 <button
                   onClick={sendMessage}
