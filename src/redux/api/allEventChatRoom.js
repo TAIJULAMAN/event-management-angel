@@ -36,7 +36,14 @@ export const allEventChatRoomApi = baseApi.injectEndpoints({
                 method: "DELETE",
             }),
         }),
+        getGroupConversationandpeople: builder.query({
+            query: (eventId) => ({
+                url: `conversation/get_group_conversation/${eventId}`,
+                method: "GET",
+            }),
+            providesTags: ["getGroupConversationandpeople"],
+        }),
     }),
 });
 
-export const { useGetAllEventChatRoomQuery, useSpecificEventWiseConversationQuery, useNewMessageMutation, useDeleteMessageMutation } = allEventChatRoomApi;
+export const { useGetAllEventChatRoomQuery, useSpecificEventWiseConversationQuery, useNewMessageMutation, useDeleteMessageMutation, useGetGroupConversationandpeopleQuery } = allEventChatRoomApi;

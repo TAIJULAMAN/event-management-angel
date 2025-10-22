@@ -1,9 +1,9 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { AiOutlineFileAdd, AiOutlineSearch } from "react-icons/ai";
 import { RiSendPlane2Fill } from "react-icons/ri";
 import { FiMenu, FiMoreVertical } from "react-icons/fi";
 import { FiTrash2 } from "react-icons/fi";
-import { Popconfirm, Tooltip } from "antd";
+import { Popconfirm, Tooltip, Modal, Avatar } from "antd";
 
 
 import { useParams, useNavigate } from "react-router-dom";
@@ -17,6 +17,7 @@ import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import defaultIMG from "../../assets/defaultImg";
 import { useNewMessageMutation, useDeleteMessageMutation } from "../../redux/api/allEventChatRoom";
+import { useGetGroupConversationandpeopleQuery } from "../../redux/api/allEventChatRoom";
 
 const Chat = () => {
   const [selectedRoom, setSelectedRoom] = useState(null);
@@ -39,6 +40,8 @@ const Chat = () => {
   const [msgMeta, setMsgMeta] = useState(null);
   // attachment preview state
   const [pendingAttachment, setPendingAttachment] = useState(null); // { file, url, type }
+  // participants modal
+  const [showParticipants, setShowParticipants] = useState(false);
   //
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -52,6 +55,26 @@ const Chat = () => {
   const currentUserId = decoded?.id;
   const [createMessage, { isLoading: isUploading }] = useNewMessageMutation();
   const [deleteMessage, { isLoading: isDeleting }] = useDeleteMessageMutation();
+  const { data: groupConvos, isLoading: isGroupLoading } = useGetGroupConversationandpeopleQuery(
+    eventId,
+    { skip: !eventId }
+  );
+
+  const participants = useMemo(() => {
+    const list = [];
+    const seen = new Set();
+    const convos = groupConvos?.data?.allConversations || [];
+    for (const c of convos) {
+      for (const p of c?.participants || []) {
+        const id = p?._id || p?.id;
+        if (id && !seen.has(id)) {
+          seen.add(id);
+          list.push(p);
+        }
+      }
+    }
+    return list;
+  }, [groupConvos]);
   
   const {
     data: allEventChatRoomData,
@@ -449,11 +472,44 @@ const Chat = () => {
                   {selectedRoom?.eventId?.event_title || ""}
                 </p>
               </div>
-              <button className="p-2 hover:bg-white/10 rounded-full transition-colors">
-                <FiMoreVertical className="w-5 h-5" />
-              </button>
+              <Tooltip title="View participants">
+                <button
+                  className="p-2 hover:bg-white/10 rounded-full transition-colors"
+                  onClick={() => setShowParticipants(true)}
+                >
+                  <FiMoreVertical className="w-5 h-5" />
+                </button>
+              </Tooltip>
             </div>
           </div>
+
+          <Modal
+            title="Participants"
+            open={showParticipants}
+            onCancel={() => setShowParticipants(false)}
+            footer={null}
+            width={480}
+          >
+            {isGroupLoading ? (
+              <div className="py-6 text-center text-gray-500">Loading...</div>
+            ) : participants.length === 0 ? (
+              <div className="py-6 text-center text-gray-500">No participants found.</div>
+            ) : (
+              <div className="max-h-80 overflow-y-auto divide-y">
+                {participants.map((p) => (
+                  <div key={p?._id || p?.id} className="flex items-center gap-3 py-3">
+                    <Avatar src={getImageUrl(p?.photo)} size={36}>
+                      {p?.name?.[0] || "?"}
+                    </Avatar>
+                    <div className="min-w-0">
+                      <div className="text-sm font-medium text-gray-800 truncate">{p?.name}</div>
+                      <div className="text-xs text-gray-500 truncate">{p?.email}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </Modal>
 
           {/* Messages Area */}
           <div className="flex-1 overflow-y-auto bg-gray-50 p-4 space-y-4">
@@ -519,7 +575,7 @@ const Chat = () => {
                           <Tooltip title="Delete">
                             <button
                               disabled={isDeleting}
-                              className="ml-2 p-1 rounded hover:bg-red-50 text-red-500 hover:text-red-600 disabled:opacity-50"
+                              className="ml-2 p-1 rounded hover:bg-red-50 text-gray-400 hover:text-red-600 disabled:opacity-50"
                             >
                               <FiTrash2 className="w-4 h-4" />
                             </button>
