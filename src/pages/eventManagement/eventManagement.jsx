@@ -7,6 +7,7 @@ import { FaRegEye } from "react-icons/fa";
 import { useGetAllEventsQuery } from "../../redux/api/eventManagementApi";
 import { getImageUrl } from "../../config/envConfig";
 import useDebounce from "../../hooks/useDebounce";
+import defaultIMG from "../../assets/defaultImg";
 
 function EventManagement() {
     const [searchTerm, setSearchTerm] = useState("");
@@ -26,6 +27,7 @@ function EventManagement() {
         limit: pagination.pageSize,
     });
 
+    console.log(defaultIMG);
     useEffect(() => {
         if (eventsData?.meta) {
             setPagination(prev => ({
@@ -78,7 +80,7 @@ function EventManagement() {
             key: "image",
             render: (_, record) => (
                 <img
-                    src={getImageUrl(record.photo)}
+                    src={getImageUrl(record.photo) || `${defaultIMG}`}
                     className="w-20 h-10 object-cover"
                     alt="Event"
                 />

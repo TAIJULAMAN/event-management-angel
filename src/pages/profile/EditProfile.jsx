@@ -107,7 +107,7 @@ function EditProfile() {
             >
               <div className="relative">
                 <img
-                  src={preview || 'https://avatar.iran.liara.run/public/31'}
+                  src={preview || `${defaultIMG}`}
                   alt="Profile"
                   className="w-32 h-32 rounded-full object-cover border-2 border-gray-200"
                 />

@@ -2,13 +2,14 @@
 import { useNavigate } from "react-router-dom";
 import { useGetProfileQuery } from "../../redux/api/profileApi";
 import { getImageUrl } from "../../config/envConfig";
+import defaultIMG from "../../assets/defaultImg";
 
 const MainHeader = ({ toggleSidebar }) => {
   const navigate = useNavigate();
   const { data: profileData, isLoading } = useGetProfileQuery();
   
   // Default avatar URL
-  const defaultAvatar = "https://avatar.iran.liara.run/public/31";
+  const defaultAvatar = `${defaultIMG}`;
 
   return (
     <div className="relative w-full">

@@ -9,6 +9,7 @@ import { format } from 'date-fns';
 import { FiMail, FiPhone, FiCalendar, FiUser } from 'react-icons/fi';
 import { getImageUrl } from "../../config/envConfig";
 import useDebounce from "../../hooks/useDebounce";
+import defaultIMG from "../../assets/defaultImg";
 
 function UserDetails() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -75,7 +76,7 @@ function UserDetails() {
     key: user._id,
     no: (pagination.current - 1) * pagination.pageSize + index + 1,
     name: user.name || 'N/A',
-    photo: user.photo || `https://avatar.iran.liara.run/public/${user._id}`,
+    photo: user.photo || `${defaultIMG}`,
     role: 'User', // Default role since it's not in the API response
     phone: user.phoneNumber || 'N/A',
     email: user.email || 'N/A',
@@ -373,7 +374,7 @@ function UserDetails() {
               <div className="flex items-center gap-6">
                 <div className="relative">
                   <img
-                    src={`https://avatar.iran.liara.run/public/${selectedUser.key}`}
+                    src={getImageUrl(selectedUser.photo) || `${defaultIMG}`}
                     alt={selectedUser.name}
                     className="w-24 h-24 rounded-full border-4 border-white shadow-lg object-cover"
                   />

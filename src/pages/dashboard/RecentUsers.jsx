@@ -2,6 +2,7 @@ import { ConfigProvider, Table, Spin, Alert } from "antd";
 import { useGetAllUserQuery } from "../../redux/api/userApi";
 import { format } from 'date-fns';
 import { getImageUrl } from "../../config/envConfig";
+import defaultIMG from "../../assets/defaultImg";
 
 const RecentUsers = () => {
   const { data, isLoading, isError, error } = useGetAllUserQuery({ page: 1, limit: 5 });
@@ -12,7 +13,7 @@ const RecentUsers = () => {
     no: index + 1,
     name: user.name || 'N/A',
     role: user.role || 'USER',
-    photo: user.photo || `https://avatar.iran.liara.run/public/${user._id}`,
+    photo: user.photo || `${defaultIMG}`,
     date: user.createdAt ? format(new Date(user.createdAt), 'dd/MM/yyyy') : 'N/A',
     phone: user.phoneNumber || 'N/A',
         createdAt: user.createdAt,

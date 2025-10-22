@@ -5,6 +5,7 @@ import { notification } from 'antd';
 import EditProfile from "./EditProfile";
 import ChangePass from "./ChangePass";
 import { getImageUrl } from "../../config/envConfig";
+import defaultIMG from "../../assets/defaultImg";
 
 function ProfilePage() {
   const [activeTab, setActiveTab] = useState("editProfile");
@@ -39,7 +40,7 @@ function ProfilePage() {
   };
   
   // Set a default profile image if none exists
-  const profileImage = getImageUrl(profileData?.data?.photo) || 'https://avatar.iran.liara.run/public/44';
+  const profileImage = getImageUrl(profileData?.data?.photo) || `${defaultIMG}`;
 
   return (
     <div className="overflow-y-auto">
@@ -58,7 +59,7 @@ function ProfilePage() {
                   className="w-full h-full object-cover"
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = 'https://avatar.iran.liara.run/public/44';
+                    e.target.src = `${defaultIMG}`;
                   }}
                 />
                 {/* Upload Icon */}

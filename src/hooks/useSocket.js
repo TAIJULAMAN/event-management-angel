@@ -18,6 +18,7 @@ export default function useSocket({
   const [connected, setConnected] = useState(false);
   const [messages, setMessages] = useState([]);
   const [lastError, setLastError] = useState(null);
+  const [logs, setLogs] = useState([]);
   const socketRef = useRef(null);
 
   const canConnect = Boolean(serverUrl) && Boolean(userId);
@@ -45,27 +46,56 @@ export default function useSocket({
       setConnected(true);
       setLastError(null);
       console.log("[socket] connected", { serverUrl, userId });
+      setLogs((p) => p.concat({ type: "success", message: "connected", data: { serverUrl, userId }, timestamp: new Date() }));
     };
 
     const onDisconnect = () => {
       setConnected(false);
       console.log("[socket] disconnected");
+      setLogs((p) => p.concat({ type: "warning", message: "disconnected", data: null, timestamp: new Date() }));
     };
 
     const onConnectError = (err) => {
       const msg = err?.message || String(err);
       setLastError(msg);
       console.error("[socket] connect_error", msg);
+      setLogs((p) => p.concat({ type: "error", message: "connect_error", data: { error: msg }, timestamp: new Date() }));
     };
 
     const onReceive = (payload) => {
       setMessages((prev) => prev.concat(payload));
+      setLogs((p) => p.concat({ type: "info", message: "receive:new_message", data: payload, timestamp: new Date() }));
+    };
+
+    const onSeen = (payload) => {
+      setMessages((prev) =>
+        prev.map((m) => (payload?.messageIds?.includes?.(m._id) ? { ...m, seen: true } : m))
+      );
+      setLogs((p) => p.concat({ type: "info", message: "receive:messages_seen", data: payload, timestamp: new Date() }));
+    };
+
+    const onConversationCreated = (payload) => {
+      setLogs((p) => p.concat({ type: "success", message: "receive:conversation_created", data: payload, timestamp: new Date() }));
+    };
+
+    const onSocketErrorEvent = (payload) => {
+      const msg = payload?.message || payload;
+      setLastError(msg);
+      setLogs((p) => p.concat({ type: "error", message: "socket_error", data: payload, timestamp: new Date() }));
     };
 
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
     socket.on("connect_error", onConnectError);
     socket.on(receiveEvent, onReceive);
+    socket.on("new-message", onReceive);
+    socket.on("new_message", onReceive);
+    socket.on("messages-seen", onSeen);
+    socket.on("messages_seen", onSeen);
+    socket.on("conversation-created", onConversationCreated);
+    socket.on("conversation_created", onConversationCreated);
+    socket.on("socket-error", onSocketErrorEvent);
+    socket.on("socket_error", onSocketErrorEvent);
 
     socket.connect();
 
@@ -74,6 +104,14 @@ export default function useSocket({
       socket.off("disconnect", onDisconnect);
       socket.off("connect_error", onConnectError);
       socket.off(receiveEvent, onReceive);
+      socket.off("new-message", onReceive);
+      socket.off("new_message", onReceive);
+      socket.off("messages-seen", onSeen);
+      socket.off("messages_seen", onSeen);
+      socket.off("conversation-created", onConversationCreated);
+      socket.off("conversation_created", onConversationCreated);
+      socket.off("socket-error", onSocketErrorEvent);
+      socket.off("socket_error", onSocketErrorEvent);
       socket.disconnect();
       socketRef.current = null;
     };
@@ -83,8 +121,34 @@ export default function useSocket({
     // Expected payload shape by backend:
     // { text, receiverId, eventId, imageUrl?, audioUrl? }
     if (!socketRef.current || !connected) return false;
-    socketRef.current.emit(sendEvent, payload);
+    const evt = sendEvent || "send_message";
+    socketRef.current.emit(evt, payload);
+    setLogs((p) => p.concat({ type: "info", message: `emit:${evt}`, data: payload, timestamp: new Date() }));
     return true;
+  };
+
+  const markSeen = (payload) => {
+    if (!socketRef.current || !connected) return false;
+    const evt = "messages-seen";
+    socketRef.current.emit(evt, payload);
+    setLogs((p) => p.concat({ type: "info", message: `emit:${evt}`, data: payload, timestamp: new Date() }));
+    return true;
+  };
+
+  const createConversation = (payload) => {
+    if (!socketRef.current || !connected) return false;
+    const evt = "create-conversation";
+    socketRef.current.emit(evt, payload);
+    setLogs((p) => p.concat({ type: "info", message: `emit:${evt}`, data: payload, timestamp: new Date() }));
+    return true;
+  };
+
+  const connectNow = () => {
+    if (socketRef.current && !socketRef.current.connected) socketRef.current.connect();
+  };
+
+  const disconnectNow = () => {
+    if (socketRef.current && socketRef.current.connected) socketRef.current.disconnect();
   };
 
   return {
@@ -93,6 +157,11 @@ export default function useSocket({
     messages,
     lastError,
     sendMessage,
+    markSeen,
+    createConversation,
+    connect: connectNow,
+    disconnect: disconnectNow,
+    logs,
   };
 }
 

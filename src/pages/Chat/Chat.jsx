@@ -13,7 +13,7 @@ import useDebounce from "../../hooks/useDebounce";
 import useSocket from "../../hooks/useSocket";
 import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
-
+import defaultIMG from "../../assets/defaultImg";
 
 const Chat = () => {
   const [selectedRoom, setSelectedRoom] = useState(null);
@@ -23,8 +23,19 @@ const Chat = () => {
   const [showSidebar, setShowSidebar] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearch = useDebounce(searchTerm, 400);
-  const [pagination, setPagination] = useState({ current: 1, pageSize: 10, total: 0, totalPage: 1 });
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+    total: 0,
+    totalPage: 1,
+  });
   const [rooms, setRooms] = useState([]);
+  // message pagination
+  const [msgPage, setMsgPage] = useState(1);
+  const msgLimit = 10;
+  const [msgMeta, setMsgMeta] = useState(null);
+  // attachment preview state
+  const [pendingAttachment, setPendingAttachment] = useState(null); // { file, url, type }
   //
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -37,29 +48,38 @@ const Chat = () => {
   const decoded = token ? jwtDecode(token) : null;
   const currentUserId = decoded?.id;
 
-
-  const { data: allEventChatRoomData, isLoading, isError } = useGetAllEventChatRoomQuery({
+  const {
+    data: allEventChatRoomData,
+    isLoading,
+    isError,
+  } = useGetAllEventChatRoomQuery({
     page: pagination.current,
     limit: pagination.pageSize,
     searchTerm: debouncedSearch,
   });
-  const { data: convoMessages, isLoading: isMessagesLoading, isError: isMessagesError } = useSpecificEventWiseConversationQuery(
-    { eventId },
+  const {
+    data: convoMessages,
+    isLoading: isMessagesLoading,
+    isError: isMessagesError,
+  } = useSpecificEventWiseConversationQuery(
+    { eventId, page: msgPage, limit: msgLimit },
     { skip: !eventId }
   );
 
-  const { connected, sendMessage: emitMessage } = useSocket({
+  const { connected, sendMessage: emitMessage, messages: liveMsgs } = useSocket({
     serverUrl: "http://10.10.20.13:3056",
     userId: currentUserId,
     eventId,
+    sendEvent: "send-message",
   });
 
   const initialSendRef = useRef({});
 
   useEffect(() => {
     if (!connected || !eventId) return;
-    const recvId = (convoMessages?.data?.messages || [])
-      .find(m => m?.msgByUserId?._id && m.msgByUserId._id !== currentUserId)?.msgByUserId?._id;
+    const recvId = (convoMessages?.data?.messages || []).find(
+      (m) => m?.msgByUserId?._id && m.msgByUserId._id !== currentUserId
+    )?.msgByUserId?._id;
     if (!recvId) return;
     if (!initialSendRef.current[eventId]) {
       emitMessage({ text: "hello ", receiverId: recvId, eventId });
@@ -67,13 +87,60 @@ const Chat = () => {
     }
   }, [connected, eventId, convoMessages, currentUserId, emitMessage]);
 
+  // Reset messages and pagination when event changes
+  useEffect(() => {
+    setMsgPage(1);
+    setMsgMeta(null);
+    setMessages([]);
+  }, [eventId]);
 
-
-
+  // Handle API messages for current page
   useEffect(() => {
     const apiMsgs = convoMessages?.data?.messages || [];
-    setMessages(apiMsgs);
-  }, [convoMessages]);
+    const meta = convoMessages?.data?.meta;
+    if (meta) setMsgMeta(meta);
+    const sorted = [...apiMsgs].sort(
+      (a, b) => new Date(a?.createdAt || 0) - new Date(b?.createdAt || 0)
+    );
+    if (msgPage === 1) {
+      setMessages(sorted);
+    } else if (sorted.length) {
+      setMessages((prev) => {
+        const merged = [...prev];
+        for (const m of sorted) {
+          if (m && m._id && !merged.some((x) => x._id === m._id)) merged.push(m);
+        }
+        return merged.sort(
+          (a, b) => new Date(a?.createdAt || 0) - new Date(b?.createdAt || 0)
+        );
+      });
+    }
+  }, [convoMessages, msgPage]);
+
+  // Merge live incoming socket messages into page messages
+  useEffect(() => {
+    if (!liveMsgs || !liveMsgs.length) return;
+    setMessages((prev) => {
+      let merged = [...prev];
+      for (const m of liveMsgs) {
+        if (!m) continue;
+        // Add if new by _id
+        if (m._id && !merged.some((x) => x._id === m._id)) {
+          merged.push(m);
+        }
+        // If this is an echo of our own message, remove matching optimistic temp
+        const fromMe = (m?.msgByUserId?._id || m?.msgByUserId) === currentUserId;
+        if (fromMe && m?.text) {
+          merged = merged.filter(
+            (x) => !(String(x?._id).startsWith("tmp-") && x?.text === m.text && (x?.msgByUserId?._id || x?.msgByUserId) === currentUserId)
+          );
+        }
+      }
+      return merged.sort(
+        (a, b) => new Date(a?.createdAt || 0) - new Date(b?.createdAt || 0)
+      );
+    });
+  }, [liveMsgs, currentUserId]);
 
   useEffect(() => {
     console.log("socket.connected:", connected);
@@ -136,15 +203,56 @@ const Chat = () => {
   }, [messages]);
 
   const sendMessage = () => {
-    if (!newMessage.trim()) return;
-    const other = messages.find((m) => m?.msgByUserId?._id && m?.msgByUserId?._id !== currentUserId);
-    const receiverId = other?.msgByUserId?._id || undefined;
-    emitMessage({ text: newMessage.trim(), receiverId, eventId });
+    if (!newMessage.trim() && !pendingAttachment) return;
+    const other = messages.find(
+      (m) => m?.msgByUserId?._id && m?.msgByUserId?._id !== currentUserId
+    );
+    // Try current page messages -> API conversation -> event host as last resort
+    let receiverId = other?.msgByUserId?._id;
+    if (!receiverId) {
+      const apiOther = (convoMessages?.data?.messages || []).find(
+        (m) => m?.msgByUserId?._id && m?.msgByUserId?._id !== currentUserId
+      );
+      receiverId = apiOther?.msgByUserId?._id;
+    }
+    if (!receiverId) {
+      const hostId = selectedRoom?.eventId?.hostId?._id;
+      receiverId = hostId && hostId !== currentUserId ? hostId : undefined;
+    }
+    if (!receiverId) {
+      console.warn("No receiverId resolved; cannot send message.");
+      return;
+    }
+    const text = newMessage.trim();
+    emitMessage({ text, receiverId, eventId });
+    // Optimistic UI update
+    const optimistic = {
+      _id: `tmp-${Date.now()}`,
+      text,
+      msgByUserId: { _id: currentUserId },
+      createdAt: new Date().toISOString(),
+    };
+    let next = (prev) => prev.concat(optimistic);
+    // If an attachment is pending, add a second optimistic indicator bubble
+    if (pendingAttachment) {
+      const attachMsg = {
+        _id: `tmp-file-${Date.now()}`,
+        text: `📎 ${pendingAttachment.name}`,
+        msgByUserId: { _id: currentUserId },
+        createdAt: new Date().toISOString(),
+      };
+      next = (prev) => prev.concat(optimistic, attachMsg);
+    }
+    setMessages(next);
     setNewMessage("");
+    // Clear attachment preview
+    if (pendingAttachment?.url) URL.revokeObjectURL(pendingAttachment.url);
+    setPendingAttachment(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
     }
@@ -152,18 +260,20 @@ const Chat = () => {
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const newMsg = {
-        id: messages.length + 1,
-        text: `📎 ${file.name}`,
-        sender: "me",
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        status: "sent",
-        type: "file",
-      };
-      setMessages([...messages, newMsg]);
-    }
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    const type = file.type?.startsWith("image/") ? "image" : "file";
+    // revoke previous preview url if any
+    if (pendingAttachment?.url) URL.revokeObjectURL(pendingAttachment.url);
+    setPendingAttachment({ file, url, type, name: file.name, size: file.size });
   };
+
+  // cleanup preview url on unmount
+  useEffect(() => {
+    return () => {
+      if (pendingAttachment?.url) URL.revokeObjectURL(pendingAttachment.url);
+    };
+  }, [pendingAttachment]);
 
   return (
     <div className="flex flex-col h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -185,8 +295,9 @@ const Chat = () => {
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar - User List */}
         <div
-          className={`absolute md:relative top-0 left-0 w-80 md:w-96 h-full bg-white shadow-lg md:shadow-none md:border-r border-gray-200 flex flex-col transition-all duration-300 z-50 ${showSidebar ? "translate-x-0" : "-translate-x-full md:translate-x-0"
-            }`}
+          className={`absolute md:relative top-0 left-0 w-80 md:w-96 h-full bg-white shadow-lg md:shadow-none md:border-r border-gray-200 flex flex-col transition-all duration-300 z-50 ${
+            showSidebar ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+          }`}
         >
           {/* Mobile close button */}
           <div className="md:hidden flex justify-end p-4 border-b">
@@ -213,53 +324,82 @@ const Chat = () => {
           </div>
 
           {/* User List */}
-          <div className="flex-1 overflow-y-auto" onScroll={(e) => {
-            const el = e.currentTarget;
-            if (el.scrollTop + el.clientHeight >= el.scrollHeight - 50) {
-              if (!isLoading && pagination.current < pagination.totalPage) {
-                setPagination((prev) => ({ ...prev, current: prev.current + 1 }));
+          <div
+            className="flex-1 overflow-y-auto"
+            onScroll={(e) => {
+              const el = e.currentTarget;
+              if (el.scrollTop + el.clientHeight >= el.scrollHeight - 50) {
+                if (!isLoading && pagination.current < pagination.totalPage) {
+                  setPagination((prev) => ({
+                    ...prev,
+                    current: prev.current + 1,
+                  }));
+                }
               }
-            }
-          }} ref={roomsListRef}>
+            }}
+            ref={roomsListRef}
+          >
             {isLoading && (
-              <div className="text-center text-gray-500 py-4">Loading chat rooms...</div>
+              <div className="text-center text-gray-500 py-4">
+                Loading chat rooms...
+              </div>
             )}
             {isError && !isLoading && (
-              <div className="text-center text-red-500 py-4">Failed to load chat rooms.</div>
+              <div className="text-center text-red-500 py-4">
+                Failed to load chat rooms.
+              </div>
             )}
             {!isLoading && !isError && filteredRooms.length === 0 && (
-              <div className="text-center text-gray-500 py-4">No chat rooms found.</div>
-            )}
-            {!isLoading && !isError && filteredRooms.map((room) => (
-              <div
-                key={room._id}
-                className={`flex items-center gap-3 p-4 cursor-pointer border-b border-gray-50 hover:bg-gray-50 transition-colors ${selectedRoom?._id === room._id ? "bg-teal-50 border-r-4 border-r-teal-500" : ""}`}
-                onClick={() => {
-                  setSelectedRoom(room);
-                  setShowSidebar(false);
-                  if (room?.eventId?._id) {
-                    navigate(`/chat/${room.eventId._id}`);
-                  }
-                }}
-              >
-                <div className="relative">
-                  <img
-                    src={getImageUrl(room?.eventId?.photo) || `https://avatar.iran.liara.run/public/${room?._id}`}
-                    alt={room?.chatRoomName}
-                    className="h-12 w-12 rounded-full object-cover"
-                  />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-gray-900 truncate">{room?.chatRoomName}</h3>
-                    <span className="text-xs text-gray-500">{room?.createdAt ? format(new Date(room.createdAt), 'hh:mm a') : ''}</span>
-                  </div>
-                  <p className="text-sm text-gray-600 truncate mt-1">{room?.eventId?.event_title || ''}</p>
-                </div>
+              <div className="text-center text-gray-500 py-4">
+                No chat rooms found.
               </div>
-            ))}
+            )}
+            {!isLoading &&
+              !isError &&
+              filteredRooms.map((room) => (
+                <div
+                  key={room._id}
+                  className={`flex items-center gap-3 p-4 cursor-pointer border-b border-gray-50 hover:bg-gray-50 transition-colors ${
+                    selectedRoom?._id === room._id
+                      ? "bg-teal-50 border-r-4 border-r-teal-500"
+                      : ""
+                  }`}
+                  onClick={() => {
+                    setSelectedRoom(room);
+                    setShowSidebar(false);
+                    if (room?.eventId?._id) {
+                      navigate(`/chat/${room.eventId._id}`);
+                    }
+                  }}
+                >
+                  <div className="relative">
+                    <img
+                      src={getImageUrl(room?.eventId?.photo) || `${defaultIMG}`}
+                      alt={room?.chatRoomName}
+                      className="h-12 w-12 rounded-full object-cover"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-semibold text-gray-900 truncate">
+                        {room?.chatRoomName}
+                      </h3>
+                      <span className="text-xs text-gray-500">
+                        {room?.createdAt
+                          ? format(new Date(room.createdAt), "hh:mm a")
+                          : ""}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-600 truncate mt-1">
+                      {room?.eventId?.event_title || ""}
+                    </p>
+                  </div>
+                </div>
+              ))}
             {!isLoading && pagination.current < pagination.totalPage && (
-              <div className="text-center text-gray-400 py-3">Scroll to load more…</div>
+              <div className="text-center text-gray-400 py-3">
+                Scroll to load more…
+              </div>
             )}
           </div>
         </div>
@@ -271,14 +411,23 @@ const Chat = () => {
             <div className="flex items-center gap-4">
               <div className="relative">
                 <img
-                  src={getImageUrl(selectedRoom?.eventId?.photo) || (selectedRoom?._id ? `https://avatar.iran.liara.run/public/${selectedRoom?._id}` : "https://avatar.iran.liara.run/public/1")}
+                  src={
+                    getImageUrl(selectedRoom?.eventId?.photo) ||
+                    (selectedRoom?._id
+                      ? `${defaultIMG}`
+                      : defaultIMG)
+                  }
                   alt={selectedRoom?.chatRoomName || "Chat Room"}
                   className="h-12 w-12 rounded-full object-cover border-2 border-white/20"
                 />
               </div>
               <div className="flex-1">
-                <h2 className="text-lg font-semibold">{selectedRoom?.chatRoomName || "Select a chat room"}</h2>
-                <p className="text-sm text-teal-100">{selectedRoom?.eventId?.event_title || ''}</p>
+                <h2 className="text-lg font-semibold">
+                  {selectedRoom?.chatRoomName || "Select a chat room"}
+                </h2>
+                <p className="text-sm text-teal-100">
+                  {selectedRoom?.eventId?.event_title || ""}
+                </p>
               </div>
               <button className="p-2 hover:bg-white/10 rounded-full transition-colors">
                 <FiMoreVertical className="w-5 h-5" />
@@ -288,40 +437,101 @@ const Chat = () => {
 
           {/* Messages Area */}
           <div className="flex-1 overflow-y-auto bg-gray-50 p-4 space-y-4">
+            {/* Load more older messages */}
+            {!isMessagesLoading && msgMeta?.totalPage > msgPage && (
+              <div className="flex justify-center">
+                <button
+                  onClick={() => setMsgPage((p) => p + 1)}
+                  className="px-4 py-2 text-sm rounded-full bg-white border border-gray-200 hover:bg-gray-100 text-gray-700"
+                >
+                  Load older messages
+                </button>
+              </div>
+            )}
             {isMessagesLoading && (
-              <div className="text-center text-gray-500 py-10">Loading messages...</div>
+              <div className="text-center text-gray-500 py-10">
+                Loading messages...
+              </div>
             )}
             {isMessagesError && !isMessagesLoading && (
-              <div className="text-center text-red-500 py-10">Failed to load messages.</div>
+              <div className="text-center text-red-500 py-10">
+                Failed to load messages.
+              </div>
             )}
-            {!isMessagesLoading && !isMessagesError && messages.length === 0 && (
-              <div className="text-center text-gray-500 py-10">No messages yet.</div>
-            )}
-            {!isMessagesLoading && !isMessagesError && messages.map((msg) => (
-              <div key={msg._id} className="flex items-start gap-3">
-                <img
-                  src={getImageUrl(msg?.msgByUserId?.photo) || `https://avatar.iran.liara.run/public/${msg?.msgByUserId?._id}`}
-                  alt={msg?.msgByUserId?.name}
-                  className="h-8 w-8 rounded-full object-cover"
-                />
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold text-gray-800">{msg?.msgByUserId?.name}</span>
-                    <span className="text-xs text-gray-500">{msg?.createdAt ? format(new Date(msg.createdAt), 'hh:mm a') : ''}</span>
-                  </div>
-                  <div className="mt-1 bg-white border rounded-2xl rounded-bl-md px-4 py-2 shadow-sm max-w-xl">
-                    <p className="text-sm leading-relaxed">{msg?.text}</p>
+            {!isMessagesLoading &&
+              !isMessagesError &&
+              messages.length === 0 && (
+                <div className="text-center text-gray-500 py-10">
+                  No messages yet.
+                </div>
+              )}
+            {!isMessagesLoading &&
+              !isMessagesError &&
+              messages.map((msg) => (
+                <div key={msg._id} className="flex items-start gap-3">
+                  <img
+                    src={
+                      getImageUrl(msg?.msgByUserId?.photo) ||
+                      `${defaultIMG}`
+                    }
+                    alt={msg?.msgByUserId?.name}
+                    className="h-8 w-8 rounded-full object-cover"
+                  />
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-semibold text-gray-800">
+                        {msg?.msgByUserId?.name}
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        {msg?.createdAt
+                          ? format(new Date(msg.createdAt), "hh:mm a")
+                          : ""}
+                      </span>
+                    </div>
+                    <div className="mt-1 bg-white border rounded-2xl rounded-bl-md px-4 py-2 shadow-sm max-w-xl">
+                      <p className="text-sm leading-relaxed">{msg?.text}</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
             <div ref={messagesEndRef} />
           </div>
 
           {/* Message Input */}
           <div className="bg-white border-t border-gray-200 p-4">
-            <div className="flex items-end gap-3">
+            <div className="flex items-center justify-center gap-3">
               <div className="flex-1 relative">
+                {pendingAttachment && (
+                  <div className="mb-3 flex items-center justify-between gap-3 border border-gray-200 rounded-xl p-2 bg-gray-50">
+                    <div className="flex items-center gap-3 min-w-0">
+                      {pendingAttachment.type === "image" ? (
+                        <img src={pendingAttachment.url} alt="preview" className="h-12 w-12 rounded-lg object-cover" />
+                      ) : (
+                        <div className="h-12 w-12 rounded-lg bg-white border border-gray-200 flex items-center justify-center text-gray-500 text-xs">
+                          FILE
+                        </div>
+                      )}
+                      <div className="min-w-0">
+                        <div className="text-sm font-medium text-gray-800 truncate">
+                          {pendingAttachment.name}
+                        </div>
+                        <div className="text-xs text-gray-500 truncate">
+                          {(pendingAttachment.size / 1024).toFixed(1)} KB
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => {
+                        if (pendingAttachment?.url) URL.revokeObjectURL(pendingAttachment.url);
+                        setPendingAttachment(null);
+                        if (fileInputRef.current) fileInputRef.current.value = "";
+                      }}
+                      className="px-2 py-1 text-xs rounded-md border border-gray-300 text-gray-600 hover:bg-gray-100"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                )}
                 <textarea
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
@@ -347,11 +557,12 @@ const Chat = () => {
                 </button>
                 <button
                   onClick={sendMessage}
-                  disabled={!newMessage.trim()}
-                  className={`p-3 rounded-full transition-all ${newMessage.trim()
+                  disabled={!newMessage.trim() && !pendingAttachment}
+                  className={`p-3 rounded-full transition-all ${
+                    newMessage.trim() || pendingAttachment
                       ? "bg-teal-500 hover:bg-teal-600 text-white shadow-lg"
                       : "bg-gray-200 text-gray-400 cursor-not-allowed"
-                    }`}
+                  }`}
                 >
                   <RiSendPlane2Fill className="w-5 h-5" />
                 </button>
@@ -361,7 +572,6 @@ const Chat = () => {
         </div>
 
         {/* Right Sidebar - Media & Files */}
-       
       </div>
     </div>
   );

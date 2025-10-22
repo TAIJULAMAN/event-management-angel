@@ -8,6 +8,7 @@ import { format } from 'date-fns';
 import { getImageUrl } from "../../config/envConfig";
 import useDebounce from "../../hooks/useDebounce";
 import { useNavigate } from "react-router-dom";
+import defaultIMG from "../../assets/defaultImg";
 
 
 function AllEventChatroom() {
@@ -108,7 +109,7 @@ function AllEventChatroom() {
             render: (_, record) => (
                 <div className="flex items-center gap-3">
                     <img
-                        src={getImageUrl(record.eventPhoto) || `https://avatar.iran.liara.run/public/${record.key}`}
+                        src={getImageUrl(record.eventPhoto) || `${defaultIMG}`}
                         alt="Event"
                         className="w-10 h-10 object-cover rounded-md"
                     />
@@ -259,7 +260,7 @@ function AllEventChatroom() {
                                                 {(conv.participants || []).map((p) => (
                                                     <img
                                                         key={p._id}
-                                                        src={getImageUrl(p.photo) || `https://avatar.iran.liara.run/public/${p._id}`}
+                                                        src={getImageUrl(p.photo) || `${defaultIMG}`}
                                                         alt={p.name}
                                                         className="w-9 h-9 rounded-full border-2 border-white object-cover"
                                                     />
