@@ -63,11 +63,13 @@ export default function useSocket({
     };
 
     const onReceive = (payload) => {
+      console.log("[socket] event:new_message", payload);
       setMessages((prev) => prev.concat(payload));
       setLogs((p) => p.concat({ type: "info", message: "receive:new_message", data: payload, timestamp: new Date() }));
     };
 
     const onSeen = (payload) => {
+      console.log("[socket] event:messages_seen", payload);
       setMessages((prev) =>
         prev.map((m) => (payload?.messageIds?.includes?.(m._id) ? { ...m, seen: true } : m))
       );
@@ -75,12 +77,14 @@ export default function useSocket({
     };
 
     const onConversationCreated = (payload) => {
+      console.log("[socket] event:conversation_created", payload);
       setLogs((p) => p.concat({ type: "success", message: "receive:conversation_created", data: payload, timestamp: new Date() }));
     };
 
     const onSocketErrorEvent = (payload) => {
       const msg = payload?.message || payload;
       setLastError(msg);
+      console.log("[socket] event:socket_error", payload);
       setLogs((p) => p.concat({ type: "error", message: "socket_error", data: payload, timestamp: new Date() }));
     };
 
@@ -89,13 +93,9 @@ export default function useSocket({
     socket.on("connect_error", onConnectError);
     socket.on(receiveEvent, onReceive);
     socket.on("new-message", onReceive);
-    socket.on("new_message", onReceive);
     socket.on("messages-seen", onSeen);
-    socket.on("messages_seen", onSeen);
     socket.on("conversation-created", onConversationCreated);
-    socket.on("conversation_created", onConversationCreated);
     socket.on("socket-error", onSocketErrorEvent);
-    socket.on("socket_error", onSocketErrorEvent);
 
     socket.connect();
 
@@ -105,13 +105,9 @@ export default function useSocket({
       socket.off("connect_error", onConnectError);
       socket.off(receiveEvent, onReceive);
       socket.off("new-message", onReceive);
-      socket.off("new_message", onReceive);
       socket.off("messages-seen", onSeen);
-      socket.off("messages_seen", onSeen);
       socket.off("conversation-created", onConversationCreated);
-      socket.off("conversation_created", onConversationCreated);
       socket.off("socket-error", onSocketErrorEvent);
-      socket.off("socket_error", onSocketErrorEvent);
       socket.disconnect();
       socketRef.current = null;
     };
@@ -122,6 +118,7 @@ export default function useSocket({
     // { text, receiverId, eventId, imageUrl?, audioUrl? }
     if (!socketRef.current || !connected) return false;
     const evt = sendEvent || "send_message";
+    console.log(`[socket] emit:${evt}`, payload);
     socketRef.current.emit(evt, payload);
     setLogs((p) => p.concat({ type: "info", message: `emit:${evt}`, data: payload, timestamp: new Date() }));
     return true;
@@ -130,6 +127,7 @@ export default function useSocket({
   const markSeen = (payload) => {
     if (!socketRef.current || !connected) return false;
     const evt = "messages-seen";
+    console.log(`[socket] emit:${evt}`, payload);
     socketRef.current.emit(evt, payload);
     setLogs((p) => p.concat({ type: "info", message: `emit:${evt}`, data: payload, timestamp: new Date() }));
     return true;
@@ -138,6 +136,7 @@ export default function useSocket({
   const createConversation = (payload) => {
     if (!socketRef.current || !connected) return false;
     const evt = "create-conversation";
+    console.log(`[socket] emit:${evt}`, payload);
     socketRef.current.emit(evt, payload);
     setLogs((p) => p.concat({ type: "info", message: `emit:${evt}`, data: payload, timestamp: new Date() }));
     return true;

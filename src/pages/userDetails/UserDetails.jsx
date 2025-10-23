@@ -26,6 +26,14 @@ function UserDetails() {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchTimeout, setSearchTimeout] = useState(null);
   const debouncedSearchTerm = useDebounce(searchTerm, 400);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const compute = () => setIsMobile(window.innerWidth < 768);
+    compute();
+    window.addEventListener('resize', compute);
+    return () => window.removeEventListener('resize', compute);
+  }, []);
 
   const { data, isLoading, isError, error } = useGetAllUserQuery({
     page: pagination.current,
@@ -178,7 +186,7 @@ function UserDetails() {
     {
       title: "Actions",
       key: "actions",
-      fixed: 'right',
+      fixed: isMobile ? undefined : 'right',
       width: 140,
       render: (_, record) => (
         <div className="flex gap-2 flex-wrap">

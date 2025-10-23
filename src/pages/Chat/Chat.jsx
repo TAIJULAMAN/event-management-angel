@@ -101,20 +101,6 @@ const Chat = () => {
     sendEvent: "send-message",
   });
 
-  const initialSendRef = useRef({});
-
-  useEffect(() => {
-    if (!connected || !eventId) return;
-    const recvId = (convoMessages?.data?.messages || []).find(
-      (m) => m?.msgByUserId?._id && m.msgByUserId._id !== currentUserId
-    )?.msgByUserId?._id;
-    if (!recvId) return;
-    if (!initialSendRef.current[eventId]) {
-      emitMessage({ text: "hello ", receiverId: recvId, eventId });
-      initialSendRef.current[eventId] = true;
-    }
-  }, [connected, eventId, convoMessages, currentUserId, emitMessage]);
-
   // Reset messages and pagination when event changes
   useEffect(() => {
     setMsgPage(1);
